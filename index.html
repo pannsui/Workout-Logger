@@ -1,0 +1,3058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Workout Log</title>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
+
+// ---------------------------------------------------------------------------
+// Program data. Slots are grouped by muscleGroup and pre-sorted so every day
+// renders as contiguous muscle-group sections. Order within each day follows
+// research discussed with the user: lead with the heaviest compound to
+// protect strength, then place the day's priority/lagging muscle group next
+// (before fatigue and focus drop), then finish with remaining isolation work.
+// Option ids are stable identifiers used as storage keys and must never
+// change once someone has logged real data to them.
+// ---------------------------------------------------------------------------
+const PROGRAM = {
+  day1: {
+    short: "Day 1",
+    label: "Chest, Shoulders & Rear Delts",
+    slots: [
+      {
+        slotId: "chest_press",
+        muscleGroup: "Chest",
+        muscles: ["Chest", "Front Delts", "Triceps"],
+        label: "Heavy Chest Press",
+        target: "4 x 6-8",
+        sets: 4,
+        topRep: 8,
+        restSeconds: 150,
+        cues: ["You should feel this across your chest, not in your front shoulders or triceps."],
+        options: [
+          { id: "flat_bench", name: "Flat Bench Press (Barbell)", seed: "30" },
+          { id: "db_bench", name: "Dumbbell Bench Press", seed: "50" },
+          { id: "machine_chest_press", name: "Machine Chest Press", seed: "100" },
+          { id: "smith_flat_bench", name: "Smith Machine Flat Press" },
+        ],
+      },
+      {
+        slotId: "incline_press",
+        muscleGroup: "Chest",
+        muscles: ["Upper Chest", "Front Delts", "Triceps"],
+        label: "Incline Press",
+        target: "3 x 8-10",
+        sets: 3,
+        topRep: 10,
+        restSeconds: 150,
+        cues: ["Feel the stretch and squeeze in your upper chest, not your shoulders."],
+        options: [
+          { id: "incline_db", name: "Incline Dumbbell Press", seed: "52.5" },
+          { id: "incline_barbell", name: "Incline Barbell Press" },
+          { id: "incline_machine", name: "Incline Chest Press Machine" },
+        ],
+      },
+      {
+        slotId: "face_pull_1",
+        muscleGroup: "Rear Delts & Posture",
+        muscles: ["Rear Delts", "Traps", "Rotator Cuff"],
+        label: "Face Pull",
+        target: "3 x 12-15",
+        sets: 3,
+        topRep: 15,
+        restSeconds: 75,
+        cues: ["Feel this in your rear shoulders and upper back - not your traps shrugging up."],
+        options: [
+          { id: "cable_face_pull", name: "Cable Face Pull", seed: "40" },
+          { id: "band_face_pull", name: "Band Face Pull" },
+        ],
+      },
+      {
+        slotId: "rear_delt",
+        muscleGroup: "Rear Delts & Posture",
+        muscles: ["Rear Delts", "Upper Back"],
+        label: "Rear Delt Fly",
+        target: "3 x 12-15",
+        sets: 3,
+        topRep: 15,
+        restSeconds: 75,
+        cues: ["Feel the back of your shoulders working, not your traps rising toward your ears."],
+        options: [
+          { id: "cable_rear_delt", name: "Cross Cable Rear Delt Fly", seed: "7.5" },
+          { id: "pec_deck_rear", name: "Reverse Pec Deck" },
+          { id: "db_rear_delt", name: "Bent-Over DB Rear Delt Fly" },
+        ],
+      },
+      {
+        slotId: "lateral_raise",
+        muscleGroup: "Shoulders",
+        muscles: ["Side Delts"],
+        label: "Lateral Raise",
+        target: "3 x 12-15",
+        sets: 3,
+        topRep: 15,
+        restSeconds: 75,
+        cues: ["Feel tension on the side of your shoulder, not your traps."],
+        options: [
+          { id: "cable_lateral", name: "Cable Lateral Raise", seed: "7.5" },
+          { id: "db_lateral", name: "Dumbbell Lateral Raise" },
+          { id: "machine_lateral", name: "Machine Lateral Raise" },
+        ],
+      },
+    ],
+  },
+  day2: {
+    short: "Day 2",
+    label: "Back & Core",
+    slots: [
+      {
+        slotId: "heavy_row",
+        muscleGroup: "Back",
+        muscles: ["Lats", "Mid-Back", "Biceps"],
+        label: "Heavy Row",
+        target: "4 x 8-10",
+        sets: 4,
+        topRep: 10,
+        restSeconds: 150,
+        cues: ["Feel your back doing the pulling, not just your arms and grip."],
+        options: [
+          { id: "chest_supported_row", name: "Chest-Supported / Low Row", seed: "100" },
+          { id: "single_arm_row", name: "Single-Arm DB Row", seed: "50" },
+          { id: "seated_row_machine", name: "Seated Row Machine" },
+        ],
+      },
+      {
+        slotId: "lat_pulldown",
+        muscleGroup: "Back",
+        muscles: ["Lats", "Biceps"],
+        label: "Lat Pulldown",
+        target: "4 x 8-10",
+        sets: 4,
+        topRep: 10,
+        restSeconds: 150,
+        cues: ["Feel your lats stretch at the top and squeeze down through your armpit at the bottom."],
+        options: [
+          { id: "lat_pulldown", name: "Lat Pulldown", seed: "130" },
+          { id: "assisted_pullup", name: "Assisted Pull-Up Machine" },
+        ],
+      },
+      {
+        slotId: "straight_arm_pulldown",
+        muscleGroup: "Back",
+        muscles: ["Lats"],
+        label: "Straight Arm Pulldown",
+        target: "3 x 12-15",
+        sets: 3,
+        topRep: 15,
+        restSeconds: 75,
+        cues: ["Feel a long stretch through your lats at the top of the movement."],
+        options: [
+          { id: "straight_arm_pulldown", name: "Straight Arm Pulldown" },
+          { id: "db_pullover", name: "Dumbbell Pullover" },
+          { id: "band_straight_arm", name: "Band Straight-Arm Pulldown" },
+        ],
+      },
+      {
+        slotId: "face_pull_2",
+        muscleGroup: "Rear Delts & Posture",
+        muscles: ["Rear Delts", "Traps", "Rotator Cuff"],
+        label: "Face Pull",
+        target: "3 x 12-15",
+        sets: 3,
+        topRep: 15,
+        restSeconds: 75,
+        cues: ["Feel this in your rear shoulders and upper back - not your traps shrugging up."],
+        options: [
+          { id: "cable_face_pull", name: "Cable Face Pull", seed: "40" },
+          { id: "band_face_pull", name: "Band Face Pull" },
+        ],
+      },
+      {
+        slotId: "lower_ab",
+        muscleGroup: "Core",
+        muscles: ["Lower Abs", "Hip Flexors"],
+        label: "Lower Ab",
+        target: "3 x AMRAP (aim 10-15)",
+        sets: 3,
+        topRep: 15,
+        restSeconds: 60,
+        cues: ["Feel your lower abs curling your hips, not your hip flexors swinging your legs."],
+        bodyweight: true,
+        options: [
+          { id: "hanging_leg_raise", name: "Hanging Leg Raise" },
+          { id: "captains_chair", name: "Captain's Chair Leg Raise" },
+          { id: "lying_leg_raise", name: "Lying Leg Raise" },
+        ],
+      },
+      {
+        slotId: "upper_ab",
+        muscleGroup: "Core",
+        muscles: ["Upper Abs"],
+        label: "Upper Ab",
+        target: "3 x 12-15",
+        sets: 3,
+        topRep: 15,
+        restSeconds: 60,
+        cues: ["Feel your abs contracting to curl your ribs down, not your arms pulling your head."],
+        options: [
+          { id: "cable_crunch", name: "Cable Crunch" },
+          { id: "weighted_situp", name: "Weighted Sit-up" },
+          { id: "ab_crunch_machine", name: "Ab Crunch Machine" },
+        ],
+      },
+    ],
+  },
+  day3: {
+    short: "Day 3",
+    label: "Arms & Posture",
+    slots: [
+      {
+        slotId: "tricep_press",
+        muscleGroup: "Triceps",
+        muscles: ["Triceps", "Chest", "Front Delts"],
+        label: "Close-Grip / Tricep Press",
+        target: "3 x 6-8",
+        sets: 3,
+        topRep: 8,
+        restSeconds: 150,
+        cues: ["Feel this in your triceps at the bottom of the movement - if your chest takes over, your elbows are flaring."],
+        options: [
+          { id: "weighted_dips", name: "Weighted Dips" },
+          { id: "close_grip_smith", name: "Close-Grip Smith Machine Press" },
+          { id: "machine_dip", name: "Machine Dip" },
+        ],
+      },
+      {
+        slotId: "overhead_tricep",
+        muscleGroup: "Triceps",
+        muscles: ["Triceps"],
+        label: "Overhead Tricep Extension",
+        target: "3 x 10-12",
+        sets: 3,
+        topRep: 12,
+        restSeconds: 75,
+        cues: ["Feel a real stretch in your triceps at the bottom, not just a small partial rep."],
+        options: [
+          { id: "cable_overhead_tricep", name: "Cable Overhead Tricep Extension" },
+          { id: "overhead_tricep_ext", name: "Overhead Tricep Extension (DB)" },
+          { id: "skull_crusher", name: "EZ-Bar Skull Crusher" },
+        ],
+      },
+      {
+        slotId: "tricep_pushdown",
+        muscleGroup: "Triceps",
+        muscles: ["Triceps"],
+        label: "Tricep Pushdown",
+        target: "3 x 12-15",
+        sets: 3,
+        topRep: 15,
+        restSeconds: 75,
+        cues: ["Feel your triceps doing the work, not your shoulders rolling forward."],
+        options: [
+          { id: "tricep_pushdown", name: "Tricep Pushdown", seed: "80" },
+          { id: "reverse_grip_pushdown", name: "Reverse-Grip Tricep Pushdown" },
+          { id: "bench_dips", name: "Bench Dips" },
+        ],
+      },
+      {
+        slotId: "bicep_curl",
+        muscleGroup: "Biceps",
+        muscles: ["Biceps"],
+        label: "Bicep Curl",
+        target: "3 x 10-12",
+        sets: 3,
+        topRep: 12,
+        restSeconds: 75,
+        cues: ["Feel your biceps contracting through the whole rep, not your back swinging the weight."],
+        options: [
+          { id: "db_curl", name: "Dumbbell Curl", seed: "15" },
+          { id: "curl_machine", name: "Bicep Curl Machine (Pin 5)", seed: "Pin 5" },
+          { id: "cable_curl", name: "Cable Bicep Curl" },
+        ],
+      },
+      {
+        slotId: "hammer_curl",
+        muscleGroup: "Biceps",
+        muscles: ["Biceps", "Forearms"],
+        label: "Hammer Curl",
+        target: "3 x 10-12",
+        sets: 3,
+        topRep: 12,
+        restSeconds: 75,
+        cues: ["Feel your biceps and forearm together, without your wrists doing extra work."],
+        options: [
+          { id: "hammer_curl", name: "Hammer Curl", seed: "15" },
+          { id: "cable_hammer_curl", name: "Cable Hammer Curl (rope)" },
+          { id: "cross_body_curl", name: "Cross-Body DB Curl" },
+        ],
+      },
+      {
+        slotId: "face_pull_3",
+        muscleGroup: "Rear Delts & Posture",
+        muscles: ["Rear Delts", "Traps", "Rotator Cuff"],
+        label: "Face Pull",
+        target: "3 x 12-15",
+        sets: 3,
+        topRep: 15,
+        restSeconds: 75,
+        cues: ["Feel this in your rear shoulders and upper back - not your traps shrugging up."],
+        note: "Light rehab finisher, not a fatigue-sensitive priority lift",
+        options: [
+          { id: "cable_face_pull", name: "Cable Face Pull", seed: "40" },
+          { id: "band_face_pull", name: "Band Face Pull" },
+        ],
+      },
+    ],
+  },
+  day4: {
+    short: "Day 4",
+    label: "Legs",
+    slots: [
+      {
+        slotId: "squat_pattern",
+        muscleGroup: "Quads",
+        muscles: ["Quads", "Glutes"],
+        label: "Squat Pattern",
+        target: "4 x 6-8",
+        sets: 4,
+        topRep: 8,
+        restSeconds: 150,
+        cues: ["Feel your quads working through the whole range, not just your lower back."],
+        options: [
+          { id: "hack_squat", name: "Hack Squat", seed: "45+25" },
+          { id: "smith_squat", name: "Smith Machine Squat", seed: "45" },
+          { id: "leg_press", name: "Leg Press" },
+          { id: "angled_leg_press", name: "Angled Leg Press" },
+        ],
+      },
+      {
+        slotId: "leg_extension",
+        muscleGroup: "Quads",
+        muscles: ["Quads"],
+        label: "Leg Extension",
+        target: "3 x 12-15",
+        sets: 3,
+        topRep: 15,
+        restSeconds: 75,
+        cues: ["Feel a strong quad squeeze at the top - this one should isolate your quads specifically."],
+        options: [
+          { id: "leg_extension", name: "Leg Extension", seed: "130" },
+          { id: "sissy_squat", name: "Sissy Squat" },
+        ],
+      },
+      {
+        slotId: "hip_hinge",
+        muscleGroup: "Hamstrings & Glutes",
+        muscles: ["Hamstrings", "Glutes", "Lower Back"],
+        label: "Hip Hinge (RDL)",
+        target: "3 x 8-10",
+        sets: 3,
+        topRep: 10,
+        restSeconds: 150,
+        cues: ["Feel a stretch through your hamstrings as you hinge, not your lower back rounding."],
+        note: "Prioritize form over load",
+        options: [
+          { id: "rdl", name: "Romanian Deadlift" },
+          { id: "db_rdl", name: "Dumbbell RDL" },
+          { id: "cable_pull_through", name: "Cable Pull-Through" },
+        ],
+      },
+      {
+        slotId: "leg_curl",
+        muscleGroup: "Hamstrings & Glutes",
+        muscles: ["Hamstrings"],
+        label: "Leg Curl",
+        target: "3 x 12-15",
+        sets: 3,
+        topRep: 15,
+        restSeconds: 75,
+        cues: ["Feel your hamstrings contracting, not your calves cramping or your hips lifting."],
+        options: [
+          { id: "seated_leg_curl", name: "Seated Leg Curl", seed: "100", note: "Settings: 3 ankle, 2 back, pin 5" },
+          { id: "lying_leg_curl", name: "Lying Leg Curl" },
+          { id: "standing_leg_curl", name: "Standing Single-Leg Curl" },
+        ],
+      },
+      {
+        slotId: "calf_raise",
+        muscleGroup: "Calves",
+        muscles: ["Calves"],
+        label: "Calf Raise",
+        target: "4 x 12-15",
+        sets: 4,
+        topRep: 15,
+        restSeconds: 75,
+        cues: ["Feel a deep stretch at the bottom and a hard squeeze at the top of your calf."],
+        options: [
+          { id: "calf_raise", name: "Calf Raise", seed: "45+45" },
+          { id: "leg_press_calf", name: "Leg Press Calf Press" },
+          { id: "standing_calf_machine", name: "Standing Calf Raise Machine" },
+        ],
+      },
+    ],
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Auto-tagging: guesses a muscle group + specific muscles from an exercise
+// name, so custom exercises don't need to be manually categorized. Checked
+// in order; first match wins. Falls back to "Other" if nothing matches -
+// the user can always see and fix the tag before saving.
+// ---------------------------------------------------------------------------
+const AUTO_TAG_RULES = [
+  {
+    keywords: ["face pull", "rear delt", "reverse fly", "reverse pec", "band pull apart"],
+    muscleGroup: "Rear Delts & Posture",
+    muscles: ["Rear Delts", "Traps"],
+    cues: ["Feel this in your rear shoulders and upper back, not your traps."],
+  },
+  {
+    keywords: ["bench", "chest press", "pec", "fly", "flye", "dip", "incline press", "decline press"],
+    muscleGroup: "Chest",
+    muscles: ["Chest", "Triceps"],
+    cues: ["Feel this across your chest, not your front shoulders or triceps."],
+  },
+  {
+    keywords: ["shoulder", "delt", "overhead press", "ohp", "arnold", "lateral raise", "military"],
+    muscleGroup: "Shoulders",
+    muscles: ["Side Delts"],
+    cues: ["Feel tension on the side of your shoulder, not your traps."],
+  },
+  {
+    keywords: ["row", "pulldown", "pull-up", "pullup", "chin-up", "chinup", "lat "],
+    muscleGroup: "Back",
+    muscles: ["Lats", "Mid-Back"],
+    cues: ["Feel your back doing the pulling, not just your arms."],
+  },
+  {
+    keywords: ["deadlift", "rdl", "romanian", "hip thrust", "good morning"],
+    muscleGroup: "Hamstrings & Glutes",
+    muscles: ["Hamstrings", "Glutes"],
+    cues: ["Feel a stretch through your hamstrings, not your lower back rounding."],
+  },
+  {
+    keywords: ["tricep", "pushdown", "skull", "kickback", "overhead extension"],
+    muscleGroup: "Triceps",
+    muscles: ["Triceps"],
+    cues: ["Feel your triceps doing the work, not your shoulders."],
+  },
+  {
+    keywords: ["bicep", "curl"],
+    muscleGroup: "Biceps",
+    muscles: ["Biceps"],
+    cues: ["Feel your biceps contracting, not your back swinging the weight."],
+  },
+  {
+    keywords: ["squat", "leg press", "leg extension", "lunge", "sissy"],
+    muscleGroup: "Quads",
+    muscles: ["Quads"],
+    cues: ["Feel your quads working through the whole range."],
+  },
+  {
+    keywords: ["leg curl", "hamstring"],
+    muscleGroup: "Hamstrings & Glutes",
+    muscles: ["Hamstrings"],
+    cues: ["Feel your hamstrings contracting, not your hips lifting."],
+  },
+  {
+    keywords: ["calf"],
+    muscleGroup: "Calves",
+    muscles: ["Calves"],
+    cues: ["Feel a deep stretch at the bottom and a hard squeeze at the top of your calf."],
+  },
+  {
+    keywords: ["ab ", "abs", "crunch", "plank", "sit-up", "situp", "core"],
+    muscleGroup: "Core",
+    muscles: ["Abs"],
+    cues: ["Feel your abs contracting, not your neck or arms pulling."],
+  },
+];
+
+const GENERIC_CUES = ["Move slowly enough to actually feel the target muscle working, not just moving the weight."];
+
+function autoTagExercise(name) {
+  const lower = " " + name.toLowerCase() + " ";
+  for (const rule of AUTO_TAG_RULES) {
+    if (rule.keywords.some((k) => lower.includes(k))) {
+      return { muscleGroup: rule.muscleGroup, muscles: rule.muscles, cues: rule.cues };
+    }
+  }
+  return { muscleGroup: "Other", muscles: ["Other"], cues: GENERIC_CUES };
+}
+
+// ---------------------------------------------------------------------------
+// Boss names: a dungeon encounter name is picked deterministically from the
+// day + real calendar date, so it stays the same all day and changes
+// tomorrow - no extra storage needed to keep it stable.
+// ---------------------------------------------------------------------------
+function buildOptionIndex() {
+  const idx = {};
+  Object.values(PROGRAM).forEach((day) => {
+    day.slots.forEach((slot) => {
+      slot.options.forEach((opt) => {
+        if (!idx[opt.id]) idx[opt.id] = { name: opt.name, muscleGroup: slot.muscleGroup };
+      });
+    });
+  });
+  return idx;
+}
+const OPTION_INDEX = buildOptionIndex();
+
+function buildSeedHistory() {
+  const seed = {};
+  Object.values(PROGRAM).forEach((day) => {
+    day.slots.forEach((slot) => {
+      slot.options.forEach((opt) => {
+        if (opt.seed && !seed[opt.id]) {
+          seed[opt.id] = [{ date: "Reported", weight: opt.seed, reps: null, isBaseline: true }];
+        }
+      });
+    });
+  });
+  return seed;
+}
+
+const DEFAULT_PROFILE_NAME = "Jackie's Workout Plan";
+
+// Bump this whenever the saved-data shape changes in a way future code needs
+// to know about. Every save writes this alongside the data; load-time code
+// can branch on it to migrate older saves forward without losing anything.
+const CURRENT_SCHEMA_VERSION = 1;
+
+function emptyDayMap() {
+  return { day1: [], day2: [], day3: [], day4: [] };
+}
+
+function freshProfileData(name, withSeedData, planStructure) {
+  return {
+    name,
+    planStructure: planStructure || null,
+    history: withSeedData ? buildSeedHistory() : {},
+    activeOptions: {},
+    customExercises: emptyDayMap(),
+    customSlotOptions: {},
+    hiddenSlots: emptyDayMap(),
+    cardioHistory: [],
+    manualMaxes: [],
+  };
+}
+
+function todayLabel() {
+  const d = new Date();
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
+function getDefaultDay() {
+  const map = { 1: "day1", 2: "day2", 3: "day3", 4: "day4" };
+  return map[new Date().getDay()] || "day1";
+}
+
+function getDefaultDayForCount(dayCount) {
+  if (dayCount >= 4) return getDefaultDay();
+  const weekday = new Date().getDay() || 7;
+  const idx = ((weekday - 1) % dayCount) + 1;
+  return `day${idx}`;
+}
+
+// ---------------------------------------------------------------------------
+// Plan builder: lets a profile define its own day count and per-day muscle
+// group focus, pulling matching exercises from the full library below rather
+// than being locked to the fixed 4-day split. Existing profiles that don't
+// set planStructure keep using PROGRAM directly, completely unchanged.
+// ---------------------------------------------------------------------------
+const ALL_SLOTS = Object.values(PROGRAM).flatMap((day) => day.slots);
+
+const MUSCLE_CHART = [
+  { section: "Upper Body", groups: ["Chest", "Back", "Shoulders", "Rear Delts & Posture", "Biceps", "Triceps"] },
+  { section: "Lower Body", groups: ["Quads", "Hamstrings & Glutes", "Calves"] },
+  { section: "Core", groups: ["Core"] },
+];
+
+function slotsForMuscleGroups(groups) {
+  return ALL_SLOTS.filter((slot) => groups.includes(slot.muscleGroup));
+}
+
+function labelForMuscleGroups(groups) {
+  return groups.length ? groups.join(" & ") : "Rest / Custom";
+}
+
+const FULL_BODY_REQUIREMENT = ["Chest", "Back", "Shoulders", "Quads", "Hamstrings & Glutes", "Core"];
+
+function coveredMuscleGroups(manualDays) {
+  const covered = new Set();
+  manualDays.flat().forEach((slotId) => {
+    const slot = ALL_SLOTS.find((s) => s.slotId === slotId);
+    if (slot) covered.add(slot.muscleGroup);
+  });
+  return covered;
+}
+
+function resolveProfileDays(profile) {
+  if (!profile || !profile.planStructure || !profile.planStructure.days || profile.planStructure.days.length === 0) {
+    return PROGRAM;
+  }
+  const result = {};
+  profile.planStructure.days.forEach((d, i) => {
+    const slots = d.slotIds
+      ? d.slotIds.map((id) => ALL_SLOTS.find((s) => s.slotId === id)).filter(Boolean)
+      : slotsForMuscleGroups(d.muscleGroups);
+    result[`day${i + 1}`] = {
+      short: `Day ${i + 1}`,
+      label: d.label || labelForMuscleGroups(d.muscleGroups || []),
+      slots,
+    };
+  });
+  return result;
+}
+
+function isToppedOut(entry, slot) {
+  if (!entry || entry.isBaseline || !entry.reps || entry.reps.length < slot.sets) return false;
+  return entry.reps.every((r) => r >= slot.topRep);
+}
+
+function getLast(history, optionId) {
+  const arr = history[optionId];
+  if (!arr || arr.length === 0) return null;
+  return arr[arr.length - 1];
+}
+
+function loggedToday(history, optionId) {
+  const last = getLast(history, optionId);
+  return !!last && !last.isBaseline && last.date === todayLabel();
+}
+
+function customToSlot(entry) {
+  return {
+    slotId: `custom_${entry.id}`,
+    muscleGroup: entry.muscleGroup,
+    muscles: entry.muscles,
+    cues: entry.cues,
+    label: entry.name,
+    target: "3 x 8-12",
+    sets: 3,
+    topRep: 12,
+    restSeconds: 90,
+    isCustom: true,
+    options: [{ id: entry.id, name: entry.name }],
+  };
+}
+
+const EXERCISE_STOP_WORDS = new Set([
+  "the", "a", "an", "machine", "cable", "barbell", "dumbbell", "smith", "db", "bb",
+  "seated", "standing", "single", "double", "arm", "band", "plate", "loaded", "assisted",
+]);
+
+function significantWords(text) {
+  return text
+    .toLowerCase()
+    .split(/[\s\-/()]+/)
+    .filter((w) => w.length > 2 && !EXERCISE_STOP_WORDS.has(w));
+}
+
+function findSimilarSlot(name, daySlots, muscleGroup) {
+  const nameWords = new Set(significantWords(name));
+  if (nameWords.size === 0) return null;
+  let best = null;
+  let bestScore = 0;
+  daySlots.forEach((slot) => {
+    if (slot.muscleGroup !== muscleGroup) return;
+    const candidateWords = new Set([...significantWords(slot.label), ...significantWords(slot.options[0].name)]);
+    const overlap = [...nameWords].filter((w) => candidateWords.has(w)).length;
+    if (overlap > bestScore) {
+      bestScore = overlap;
+      best = slot;
+    }
+  });
+  return bestScore > 0 ? best : null;
+}
+
+function mergedDaySlots(baseDay, customList, customSlotOptions, hiddenIds) {
+  const hidden = hiddenIds || [];
+  const customSlots = (customList || []).map(customToSlot);
+  const allSlots = [...baseDay.slots, ...customSlots]
+    .filter((slot) => !hidden.includes(slot.slotId))
+    .map((slot) => {
+      const extra = (customSlotOptions && customSlotOptions[slot.slotId]) || [];
+      return extra.length ? { ...slot, options: [...slot.options, ...extra] } : slot;
+    });
+  return { ...baseDay, slots: allSlots };
+}
+
+function groupSlotsByMuscle(slots) {
+  const groups = [];
+  let current = null;
+  slots.forEach((slot) => {
+    if (!current || current.muscleGroup !== slot.muscleGroup) {
+      current = { muscleGroup: slot.muscleGroup, slots: [] };
+      groups.push(current);
+    }
+    current.slots.push(slot);
+  });
+  return groups;
+}
+
+function parseWeightNum(w) {
+  if (w == null || w === "BW") return null;
+  if (/^\d+(\.\d+)?$/.test(w)) return parseFloat(w);
+  const plus = w.match(/^(\d+(?:\.\d+)?)\s*\+\s*(\d+(?:\.\d+)?)$/);
+  if (plus) return parseFloat(plus[1]) + parseFloat(plus[2]);
+  return null;
+}
+
+function isNumericWeight(w) {
+  return typeof w === "string" && /^[\d.]+(\+[\d.]+)?$/.test(w);
+}
+
+// Epley formula - the most widely used estimated-1RM formula in mainstream
+// trackers. Most reliable for sets of 10 reps or fewer taken close to failure;
+// still shown for higher rep counts but treated as a rougher estimate.
+function estimatedOneRepMax(weight, reps) {
+  const w = parseFloat(weight);
+  if (isNaN(w) || !reps || reps <= 0) return null;
+  if (reps === 1) return w;
+  return Math.round(w * (1 + reps / 30) * 10) / 10;
+}
+
+const STANDARD_PLATES = [45, 35, 25, 10, 5, 2.5];
+
+function calculatePlates(targetWeight, barWeight) {
+  const perSide = (targetWeight - barWeight) / 2;
+  if (perSide <= 0) return { perSide: 0, plates: [] };
+  let remaining = perSide;
+  const plates = [];
+  for (const p of STANDARD_PLATES) {
+    while (remaining >= p - 0.001) {
+      plates.push(p);
+      remaining -= p;
+    }
+  }
+  return { perSide, plates, remainder: Math.round(remaining * 100) / 100 };
+}
+
+function formatMMSS(totalSeconds) {
+  const t = Math.max(0, totalSeconds);
+  const m = Math.floor(t / 60);
+  const s = t % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+function RestTimer({ timerState, onExpand }) {
+  if (!timerState) return null;
+  const done = timerState.remaining <= 0;
+  return (
+    <button
+      onClick={onExpand}
+      className={`text-xs font-bold rounded-full px-2.5 py-1 border font-mono ${
+        done ? "bg-blue-500 text-white border-blue-500" : "border-blue-500 text-blue-600"
+      }`}
+    >
+      {done ? "Rest done" : formatMMSS(timerState.remaining)}
+    </button>
+  );
+}
+
+function todayFullLabel() {
+  return new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+}
+
+function SyncBadge({ status }) {
+  if (status.state === "idle") return null;
+  if (status.state === "saving") {
+    return <span className="text-xs font-semibold text-gray-500">Saving…</span>;
+  }
+  if (status.state === "error") {
+    return <span className="text-red-600 text-xs font-semibold">Not synced — check connection</span>;
+  }
+  return <span className="text-xs font-semibold text-gray-500">Synced {status.time}</span>;
+}
+
+function SavedToast({ show }) {
+  if (!show) return null;
+  return (
+    <div className="fixed top-6 inset-x-0 z-50 flex justify-center pointer-events-none">
+      <div className="fade-in bg-white border-2 border-blue-400 rounded-full px-4 py-2 flex items-center gap-2">
+        <span className="text-emerald-700 font-bold">✓</span>
+        <span className="text-gray-900 text-xs font-bold">Saved</span>
+      </div>
+    </div>
+  );
+}
+
+
+
+function SystemStyles() {
+  return (
+    <style>{`
+      @keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(4px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+      .fade-in { animation: fadeIn 0.25s ease-out; }
+      @keyframes loadingBar {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(300%); }
+      }
+      .loading-bar {
+        width: 40%;
+        border-radius: 999px;
+        animation: loadingBar 0.9s ease-in-out infinite;
+      }
+    `}</style>
+  );
+}
+
+function HudCorners({ colorClass }) {
+  return (
+    <>
+      <div className={`absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 ${colorClass} pointer-events-none`} />
+      <div className={`absolute -top-1 -right-1 w-3 h-3 border-t-2 border-r-2 ${colorClass} pointer-events-none`} />
+      <div className={`absolute -bottom-1 -left-1 w-3 h-3 border-b-2 border-l-2 ${colorClass} pointer-events-none`} />
+      <div className={`absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 ${colorClass} pointer-events-none`} />
+    </>
+  );
+}
+
+function AlertIcon({ colorClass, textClass }) {
+  return (
+    <div className={`w-6 h-6 rounded-full border-2 ${colorClass} ${textClass} font-black text-xs flex items-center justify-center shrink-0`}>
+      !
+    </div>
+  );
+}
+
+function TimerFullScreen({ slot, activeOption, timerState, onClose, onEndBreak }) {
+  if (!slot || !timerState) return null;
+  const done = timerState.remaining <= 0;
+  const pct = slot.restSeconds > 0 ? Math.max(0, Math.min(100, ((slot.restSeconds - timerState.remaining) / slot.restSeconds) * 100)) : 0;
+  return (
+    <div className="fixed inset-0 z-50 bg-gray-50 flex flex-col items-center justify-center px-6">
+      <div className={`relative bg-white border-2 w-full max-w-xs p-5 ${done ? "border-blue-400" : "border-gray-200"} rounded-3xl`}>
+
+        <div className="flex items-center justify-between border-b border-gray-100 pb-2 mb-4">
+          <div className="flex items-center gap-2">
+            <AlertIcon colorClass="border-blue-400" textClass="text-blue-600" />
+            <p className="text-gray-900 font-black tracking-widest text-sm">{done ? "REST COMPLETE" : "RESTING"}</p>
+          </div>
+          <button onClick={onClose} className="text-gray-500 text-xs font-semibold border border-gray-100 rounded-full px-2.5 py-1">
+            Close
+          </button>
+        </div>
+
+        <p className="text-blue-600 font-bold text-base mb-0.5 text-center">{activeOption ? activeOption.name : slot.label}</p>
+        <p className="text-gray-400 text-xs mb-6 text-center">{slot.label}</p>
+
+        <p className={`font-black text-6xl mb-6 text-center ${done ? "text-gray-900" : "text-gray-900"}`}>{done ? "0:00" : formatMMSS(timerState.remaining)}</p>
+
+        <div className="w-full h-3 rounded-full border border-gray-200 bg-gray-50 overflow-hidden mb-2">
+          <div className={`h-full rounded-full transition-all ${done ? "bg-blue-400" : "bg-blue-500"}`} style={{ width: `${pct}%` }} />
+        </div>
+        <p className="text-gray-400 text-xs mb-5 text-center">{done ? "Rest complete" : `Target: ${formatMMSS(slot.restSeconds)}`}</p>
+
+        <button
+          onClick={onEndBreak}
+          className={`w-full text-sm font-bold px-6 py-2.5 rounded-lg border ${done ? "bg-blue-500 text-white border-blue-300" : "border-gray-200 text-gray-700"}`}
+        >
+          {done ? "End Break" : "Skip Rest"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function totalSessionsLogged(history) {
+  return Object.values(history).reduce((sum, arr) => sum + (arr || []).filter((e) => !e.isBaseline).length, 0);
+}
+
+function computeStreak(history) {
+  const loggedDates = new Set();
+  Object.values(history).forEach((entries) => {
+    (entries || []).forEach((e) => {
+      if (!e.isBaseline) loggedDates.add(e.date);
+    });
+  });
+  let streak = 0;
+  const cursor = new Date();
+  if (!loggedDates.has(todayLabel())) {
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  while (true) {
+    const label = cursor.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    if (!loggedDates.has(label)) break;
+    streak++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+}
+
+// ACSM's 2026 resistance training guidelines suggest ~10 sets per muscle
+// group per week is a good hypertrophy target for most lifters. This tracks
+// real logged sets (not just sessions) against that benchmark.
+const WEEKLY_VOLUME_TARGET = 10;
+
+function buildFullMuscleMap(customExercises) {
+  const map = { ...OPTION_INDEX };
+  Object.values(customExercises || {}).forEach((dayList) => {
+    (dayList || []).forEach((entry) => {
+      map[entry.id] = { name: entry.name, muscleGroup: entry.muscleGroup };
+    });
+  });
+  return map;
+}
+
+function weeklyVolumeByMuscleGroup(history, customExercises) {
+  const muscleMap = buildFullMuscleMap(customExercises);
+  const last7Days = new Set();
+  const cursor = new Date();
+  for (let i = 0; i < 7; i++) {
+    last7Days.add(cursor.toLocaleDateString(undefined, { month: "short", day: "numeric" }));
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  const volume = {};
+  Object.entries(history).forEach(([optionId, entries]) => {
+    const info = muscleMap[optionId];
+    if (!info) return;
+    const sets = (entries || []).filter((e) => !e.isBaseline && last7Days.has(e.date)).reduce((sum, e) => sum + (e.reps ? e.reps.length : 0), 0);
+    if (sets > 0) volume[info.muscleGroup] = (volume[info.muscleGroup] || 0) + sets;
+  });
+  return volume;
+}
+
+
+const CARDIO_MACHINES = ["Treadmill", "Stairmaster", "Elliptical", "Bike", "Rowing Machine"];
+
+function cardioLoggedToday(cardioHistory) {
+  return (cardioHistory || []).find((e) => e.date === todayLabel()) || null;
+}
+
+function totalCardioMinutes(cardioHistory) {
+  return (cardioHistory || []).reduce((sum, e) => sum + (e.minutes || 0), 0);
+}
+
+function personalRecords(history) {
+  const records = [];
+  Object.entries(history).forEach(([optionId, entries]) => {
+    const real = (entries || []).filter((e) => !e.isBaseline && isNumericWeight(e.weight));
+    if (real.length === 0) return;
+    const best = real.reduce((max, e) => (parseFloat(e.weight) > parseFloat(max.weight) ? e : max), real[0]);
+    let bestE1RM = null;
+    real.forEach((e) => {
+      const topSetReps = e.reps && e.reps.length ? Math.max(...e.reps) : null;
+      const est = topSetReps ? estimatedOneRepMax(e.weight, topSetReps) : null;
+      if (est && (!bestE1RM || est > bestE1RM)) bestE1RM = est;
+    });
+    records.push({ optionId, name: OPTION_INDEX[optionId]?.name || optionId, weight: best.weight, reps: best.reps, date: best.date, estOneRepMax: bestE1RM });
+  });
+  return records.sort((a, b) => parseFloat(b.weight) - parseFloat(a.weight));
+}
+
+function todaysSessionSummary(day, history) {
+  if (!day) return [];
+  return day.slots
+    .map((slot) => {
+      const optId = getActiveOptionIdFor(slot, history);
+      const entries = history[optId] || [];
+      const todayEntry = entries.find((e) => !e.isBaseline && e.date === todayLabel());
+      if (!todayEntry) return null;
+      const priorBest = entries
+        .filter((e) => !e.isBaseline && e !== todayEntry && isNumericWeight(e.weight))
+        .reduce((max, e) => Math.max(max, parseFloat(e.weight)), 0);
+      const isPR = isNumericWeight(todayEntry.weight) && parseFloat(todayEntry.weight) > priorBest;
+      return { label: slot.label, weight: todayEntry.weight, reps: todayEntry.reps, isPR };
+    })
+    .filter(Boolean);
+}
+
+function getActiveOptionIdFor(slot, history) {
+  // Fallback used only for the recap summary: prefers whichever option in this slot has entries today.
+  return slot.options.find((o) => (history[o.id] || []).some((e) => !e.isBaseline && e.date === todayLabel()))?.id || slot.options[0].id;
+}
+
+function BottomNav({ currentScreen, onNavigate, onOpenMenu }) {
+  const tab = (label, screen, active) => (
+    <button onClick={() => onNavigate(screen)} className={`flex-1 py-2.5 text-xs font-bold ${active ? "text-blue-600" : "text-gray-400"}`}>
+      {label}
+    </button>
+  );
+  return (
+    <div className="fixed bottom-0 inset-x-0 z-40 bg-white border-t border-gray-100 flex items-center">
+      {tab("Today", "day", currentScreen === "day")}
+      {tab("History", "history", currentScreen === "history")}
+      {tab("Status", "status", currentScreen === "status")}
+      <button onClick={onOpenMenu} className="flex-1 py-2.5 text-xs font-bold text-gray-400">
+        ☰ Menu
+      </button>
+    </div>
+  );
+}
+
+function HamburgerMenu({ programForProfile, activeDay, currentScreen, onNavigate, onClose, onReturnToMenu, planName }) {
+  const item = (label, onClick, active) => (
+    <button
+      onClick={onClick}
+      className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-bold ${active ? "bg-blue-500 text-white" : "text-gray-900 border border-gray-100"}`}
+    >
+      {label}
+    </button>
+  );
+  return (
+    <div className="fixed inset-0 z-50 bg-gray-50 overflow-y-auto px-4 pt-6 pb-12">
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-gray-900 font-black uppercase tracking-tight text-xl">Menu</p>
+        <button onClick={onClose} className="text-gray-500 text-sm font-semibold border border-gray-100 rounded-full px-3 py-1.5">
+          Close
+        </button>
+      </div>
+      <p className="text-gray-400 text-xs mb-4">{planName}</p>
+
+      <p className="text-gray-400 text-xs font-bold tracking-widest mb-1.5">TRAINING DAYS</p>
+      <div className="space-y-1.5 mb-4">
+        {Object.entries(programForProfile).map(([key, d]) => (
+          <div key={key}>{item(d.short + " — " + d.label, () => onNavigate("day", key), currentScreen === "day" && activeDay === key)}</div>
+        ))}
+      </div>
+
+      <p className="text-gray-400 text-xs font-bold tracking-widest mb-1.5">PROGRESS</p>
+      <div className="space-y-1.5 mb-4">
+        <div>{item("Status", () => onNavigate("status"), currentScreen === "status")}</div>
+        <div>{item("Personal Records", () => onNavigate("trophy"), false)}</div>
+        <div>{item("My Maxes", () => onNavigate("maxes"), false)}</div>
+        <div>{item("History", () => onNavigate("history"), currentScreen === "history")}</div>
+      </div>
+
+      <p className="text-gray-400 text-xs font-bold tracking-widest mb-1.5">TOOLS</p>
+      <div className="space-y-1.5 mb-4">
+        <div>{item("Plate Calculator", () => onNavigate("plates"), false)}</div>
+        <div>{item("How This App Works", () => onNavigate("help"), false)}</div>
+      </div>
+
+      <p className="text-gray-400 text-xs font-bold tracking-widest mb-1.5">PLAN</p>
+      <div className="space-y-1.5">
+        <div>{item("Switch or Create Plans", () => onNavigate("profile"), currentScreen === "profile")}</div>
+        <div>{item("Backup & Export", () => onNavigate("backup"), currentScreen === "backup")}</div>
+        <div>{item("Return to Main Menu", onReturnToMenu, false)}</div>
+      </div>
+    </div>
+  );
+}
+
+function LoadingScreen() {
+  return (
+    <div className="fixed inset-0 z-50 bg-gray-50 flex flex-col items-center justify-center px-6">
+      <p className="text-gray-900 font-black uppercase tracking-tight text-3xl mb-4">Workout Log</p>
+      <div className="w-48 h-1.5 rounded-full bg-white border border-gray-100 overflow-hidden">
+        <div className="h-full bg-blue-400 loading-bar" />
+      </div>
+      <p className="text-gray-400 text-xs mt-3">Loading…</p>
+    </div>
+  );
+}
+
+function MainMenuScreen({
+  profiles,
+  onSelectProfile,
+  showCreate,
+  onToggleCreate,
+  newName,
+  onNewNameChange,
+  onCreate,
+  onSave,
+  savedFlash,
+  onOpenRecords,
+  onOpenMaxes,
+  onOpenHelp,
+}) {
+  return (
+    <div className="fixed inset-0 z-50 bg-gray-50 overflow-y-auto flex flex-col items-center justify-center px-6 py-10">
+
+      <p className="text-gray-900 font-black tracking-tight text-4xl mb-10 text-center">Workout Log</p>
+
+      <p className="text-gray-400 text-xs font-bold tracking-widest mb-2 self-center">SELECT PLAN</p>
+      <div className="w-full max-w-xs space-y-2.5 mb-5">
+        {Object.entries(profiles).map(([id, p]) => {
+          const sessions = totalSessionsLogged(p.history || {});
+          return (
+            <button
+              key={id}
+              onClick={() => onSelectProfile(id)}
+              className="relative w-full bg-white border border-gray-100 p-3.5 text-left flex items-center justify-between rounded-2xl shadow-sm"
+            >
+              <div>
+                <p className="text-gray-900 font-bold text-sm">{p.name}</p>
+                <p className="text-gray-400 text-xs mt-0.5">{sessions} sessions logged</p>
+              </div>
+              <span className="text-blue-500 text-xl">›</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {!showCreate ? (
+        <button onClick={onToggleCreate} className="w-full max-w-xs text-xs font-bold text-blue-600 border border-blue-100 rounded-lg py-2.5 mb-5">
+          + New Profile
+        </button>
+      ) : (
+        <div className="w-full max-w-xs border border-gray-100 rounded-lg p-3 mb-5">
+          <input
+            type="text"
+            value={newName}
+            onChange={(e) => onNewNameChange(e.target.value)}
+            placeholder="Profile name"
+            className="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 text-xs text-gray-900 mb-2"
+          />
+          <button onClick={onCreate} disabled={!newName.trim()} className={`text-xs font-bold px-3 py-1.5 rounded-full ${newName.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}>
+            Create & Select
+          </button>
+        </div>
+      )}
+
+      <div className="w-full max-w-xs grid grid-cols-3 gap-2 mb-5">
+        <button onClick={onOpenRecords} className="bg-white border border-gray-100 rounded-2xl py-3 text-center shadow-sm">
+          <p className="text-gray-900 text-xs font-bold">Records</p>
+        </button>
+        <button onClick={onOpenMaxes} className="bg-white border border-gray-100 rounded-2xl py-3 text-center shadow-sm">
+          <p className="text-gray-900 text-xs font-bold">My Maxes</p>
+        </button>
+        <button onClick={onOpenHelp} className="bg-white border border-gray-100 rounded-2xl py-3 text-center shadow-sm">
+          <p className="text-gray-900 text-xs font-bold">Help</p>
+        </button>
+      </div>
+
+      <button onClick={onSave} className="text-xs font-bold text-gray-700 border border-gray-200 rounded-full px-4 py-2 flex items-center gap-1.5">
+        {savedFlash ? "Saved!" : "Save"}
+      </button>
+    </div>
+  );
+}
+
+function DailyRecapScreen({ day, history, streak, onClose }) {
+  const summary = todaysSessionSummary(day, history);
+  const prCount = summary.filter((s) => s.isPR).length;
+  return (
+    <div className="fixed inset-0 z-50 bg-gray-50 flex flex-col items-center justify-center px-6">
+      <div className="relative bg-white border-2 border-blue-400 w-full max-w-xs p-5 rounded-3xl">
+        <p className="text-gray-900 font-black tracking-widest text-sm text-center mb-1">DAILY RECAP</p>
+        <p className="text-gray-500 text-xs text-center mb-4">{day ? day.label : "Today"}</p>
+
+        <div className="space-y-1.5 mb-4 max-h-48 overflow-y-auto">
+          {summary.map((s) => (
+            <div key={s.label} className="flex items-center justify-between border-b border-gray-100 pb-1 last:border-b-0">
+              <span className="text-gray-800 text-xs">
+                
+                {s.label}
+              </span>
+              <span className={`text-xs font-mono ${s.isPR ? "text-amber-700 font-bold" : "text-gray-500"}`}>
+                {s.weight === "BW" ? "BW" : `${s.weight} lb`} × {s.reps.join(", ")}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {prCount > 0 && <p className="text-amber-700 text-xs font-bold text-center mb-3">{prCount} new personal record{prCount === 1 ? "" : "s"} today!</p>}
+        {streak > 0 && <p className="text-amber-700 text-xs text-center mb-3">{streak} day{streak === 1 ? "" : "s"} in a row</p>}
+
+        <button onClick={onClose} className="w-full bg-blue-500 text-white font-bold text-sm px-6 py-2.5 rounded-lg border border-blue-300">
+          Nice!
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function MyMaxesScreen({ maxes, onAdd, onDelete, onClose }) {
+  const [exercise, setExercise] = useState("");
+  const [weight, setWeight] = useState("");
+  const [repRange, setRepRange] = useState("");
+
+  return (
+    <div className="fixed inset-0 z-50 bg-gray-50 overflow-y-auto px-4 pt-6 pb-12">
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-gray-900 font-bold text-xl">My Maxes</p>
+        <button onClick={onClose} className="text-gray-500 text-sm font-semibold border border-gray-200 rounded-full px-3 py-1.5">
+          Close
+        </button>
+      </div>
+      <p className="text-gray-500 text-xs mb-4">Record a max you already know - independent of your logged workouts.</p>
+
+      <div className="bg-white border border-gray-100 rounded-3xl p-4 mb-4 shadow-sm">
+        <input
+          type="text"
+          value={exercise}
+          onChange={(e) => setExercise(e.target.value)}
+          placeholder="Exercise, e.g. Deadlift"
+          className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 mb-2"
+        />
+        <div className="flex gap-2 mb-3">
+          <input
+            type="text"
+            inputMode="decimal"
+            value={weight}
+            onChange={(e) => setWeight(e.target.value)}
+            placeholder="Weight (lb)"
+            className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900"
+          />
+          <input
+            type="text"
+            value={repRange}
+            onChange={(e) => setRepRange(e.target.value)}
+            placeholder="Reps, e.g. 5"
+            className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900"
+          />
+        </div>
+        <button
+          onClick={() => {
+            onAdd(exercise, weight, repRange);
+            setExercise("");
+            setWeight("");
+            setRepRange("");
+          }}
+          disabled={!exercise.trim() || !weight.trim()}
+          className={`w-full text-sm font-bold px-4 py-2.5 rounded-lg ${exercise.trim() && weight.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}
+        >
+          Add Max
+        </button>
+      </div>
+
+      {maxes.length === 0 ? (
+        <p className="text-gray-400 text-sm text-center">No maxes recorded yet.</p>
+      ) : (
+        <div className="space-y-2">
+          {maxes.map((m) => (
+            <div key={m.id} className="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm flex items-center justify-between">
+              <div>
+                <p className="text-gray-900 font-bold text-sm">{m.exercise}</p>
+                <p className="text-gray-500 text-xs mt-0.5">
+                  {m.weight} lb × {m.repRange} · added {m.date}
+                </p>
+              </div>
+              <button onClick={() => onDelete(m.id)} className="text-red-600 text-xs font-semibold underline underline-offset-2 shrink-0 ml-2">
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function HelpScreen({ onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 bg-gray-50 overflow-y-auto px-4 pt-6 pb-12">
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-gray-900 font-bold text-xl">How This App Works</p>
+        <button onClick={onClose} className="text-gray-500 text-sm font-semibold border border-gray-200 rounded-full px-3 py-1.5">
+          Close
+        </button>
+      </div>
+
+      <div className="bg-white border border-gray-100 rounded-3xl p-4 mb-3 shadow-sm">
+        <p className="text-gray-900 font-bold text-sm mb-2">Getting started</p>
+        <ul className="text-gray-600 text-sm space-y-2 list-disc pl-4">
+          <li>Pick a plan on the main menu (or create a new one).</li>
+          <li>Use the bottom bar to jump between Today, History, and Status.</li>
+          <li>On a workout day, type your reps for each set, weight pre-fills from last time - just confirm or adjust it, then tap Log.</li>
+          <li>Tap Swap on any exercise to use an alternative, or type in your own.</li>
+          <li>Everything saves automatically as you go - there's no separate save step needed, though a manual Save button is also in the menu if you want extra reassurance.</li>
+        </ul>
+      </div>
+
+      <div className="bg-white border border-gray-100 rounded-3xl p-4 mb-3 shadow-sm">
+        <p className="text-gray-900 font-bold text-sm mb-2">Other things worth knowing</p>
+        <ul className="text-gray-600 text-sm space-y-2 list-disc pl-4">
+          <li><span className="font-semibold text-gray-800">Personal Records</span> shows your all-time best weight per exercise, plus an estimated 1-rep max.</li>
+          <li><span className="font-semibold text-gray-800">Plate Calculator</span> tells you exactly which plates to load for a target weight.</li>
+          <li><span className="font-semibold text-gray-800">Weekly Volume</span> on the Status screen tracks real sets per muscle group against a research-based weekly target - not just whether you showed up.</li>
+          <li><span className="font-semibold text-gray-800">RPE</span> (how hard a set felt, 6-10) is optional and hidden by default - tap "+ Add RPE" only if you want to track it.</li>
+          <li>Multiple profiles let you run separate plans (e.g. one for you, one for a partner, or different training blocks) without mixing data.</li>
+          <li><span className="font-semibold text-gray-800">Export</span> your data any time from the menu - keep a backup, or move it elsewhere.</li>
+        </ul>
+      </div>
+
+      <div className="bg-white border border-gray-100 rounded-3xl p-4 shadow-sm">
+        <p className="text-gray-900 font-bold text-sm mb-2">Why this app exists</p>
+        <p className="text-gray-600 text-sm mb-2">
+          Built for people who have an hour or two at the gym and want to spend it lifting, not fighting an app. The core idea: logging your
+          sets should take seconds, not minutes, and the app should tell you what you did last time without you having to remember or
+          re-type it.
+        </p>
+        <p className="text-gray-600 text-sm mb-2">
+          The features here follow current, mainstream strength-training guidance rather than trends - progressive overload through reps
+          and weight, roughly ten sets per muscle group per week for growth, and consistency over complexity. None of it requires you to
+          understand exercise science; the app just quietly uses it in the background.
+        </p>
+        <p className="text-gray-600 text-sm">No ads, no social feed, no streaks-as-guilt-trips. Just your training, tracked accurately, out of your way.</p>
+      </div>
+    </div>
+  );
+}
+
+function PlateCalculatorScreen({ onClose }) {
+  const [target, setTarget] = useState("");
+  const [barWeight, setBarWeight] = useState("45");
+  const t = parseFloat(target);
+  const bar = parseFloat(barWeight) || 0;
+  const result = !isNaN(t) && t > 0 ? calculatePlates(t, bar) : null;
+  const plateColor = { 45: "bg-red-500", 35: "bg-blue-500", 25: "bg-emerald-500", 10: "bg-slate-300", 5: "bg-blue-400", 2.5: "bg-slate-500" };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-gray-50 overflow-y-auto px-4 pt-6 pb-12">
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-gray-900 font-black uppercase tracking-tight text-xl">Plate Calculator</p>
+        <button onClick={onClose} className="text-gray-500 text-sm font-semibold border border-gray-100 rounded-full px-3 py-1.5">
+          Close
+        </button>
+      </div>
+
+      <label className="text-gray-500 text-xs font-bold block mb-1">Target weight (lb)</label>
+      <input
+        type="number"
+        inputMode="decimal"
+        value={target}
+        onChange={(e) => setTarget(e.target.value)}
+        placeholder="e.g. 225"
+        className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 mb-3"
+      />
+
+      <label className="text-gray-500 text-xs font-bold block mb-1">Bar weight</label>
+      <div className="flex gap-1.5 mb-4">
+        {["45", "35", "15"].map((b) => (
+          <button
+            key={b}
+            onClick={() => setBarWeight(b)}
+            className={`text-xs font-semibold px-3 py-1.5 rounded-full border ${barWeight === b ? "bg-blue-500 border-blue-400 text-gray-900" : "bg-white border-gray-100 text-gray-700"}`}
+          >
+            {b} lb
+          </button>
+        ))}
+      </div>
+
+      {result && (
+        <div className="bg-white border border-gray-100 rounded-xl p-4">
+          <p className="text-gray-500 text-xs mb-2">Per side: {result.perSide} lb</p>
+          {result.plates.length === 0 ? (
+            <p className="text-gray-500 text-sm">Just the bar — no plates needed.</p>
+          ) : (
+            <div className="flex flex-wrap gap-1.5 items-center mb-2">
+              {result.plates.map((p, i) => (
+                <span key={i} className={`${plateColor[p] || "bg-slate-500"} text-gray-900 text-xs font-bold rounded px-2 py-1`}>
+                  {p}
+                </span>
+              ))}
+            </div>
+          )}
+          {result.remainder > 0.01 && (
+            <p className="text-amber-700 text-xs">Can't hit this exactly with standard plates — {result.remainder} lb short per side.</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TrophyRoom({ history, onClose }) {
+  const records = personalRecords(history);
+  return (
+    <div className="fixed inset-0 z-50 bg-gray-50 overflow-y-auto px-4 pt-6 pb-12">
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-gray-900 font-black uppercase tracking-tight text-xl">Personal Records</p>
+        <button onClick={onClose} className="text-gray-500 text-sm font-semibold border border-gray-100 rounded-full px-3 py-1.5">
+          Close
+        </button>
+      </div>
+      <p className="text-gray-500 text-xs mb-4">Your all-time best logged weight per exercise.</p>
+      {records.length === 0 ? (
+        <div className="bg-white border border-gray-100 rounded-xl p-4">
+          <p className="text-gray-500 text-sm italic">No personal records yet — log a real session to start setting them.</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {records.map((r, i) => (
+            <div key={r.optionId} className="relative bg-white border border-amber-600 p-3 rounded-2xl">
+              <div className="flex items-center justify-between">
+                <p className="text-gray-900 font-bold text-sm">
+                  
+                  {r.name}
+                </p>
+                <p className="text-amber-700 font-black text-base">{r.weight} lb</p>
+              </div>
+              <p className="text-gray-500 text-xs mt-0.5">
+                {r.reps.join(", ")} reps · {r.date}
+              </p>
+              {r.estOneRepMax && <p className="text-gray-400 text-xs mt-0.5">Est. 1RM: {r.estOneRepMax} lb</p>}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+function ProgressSummary({ history, cardioHistory, customExercises }) {
+  const total = totalSessionsLogged(history);
+  const streak = computeStreak(history);
+  const stamina = totalCardioMinutes(cardioHistory);
+  const weeklyVolume = weeklyVolumeByMuscleGroup(history, customExercises);
+
+  return (
+    <div className="relative bg-white border border-gray-100 rounded-3xl p-4 mb-4 shadow-sm">
+      <p className="text-gray-900 font-bold text-base mb-3">Your Progress</p>
+
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        <div className="bg-gray-50 rounded-2xl p-3 text-center">
+          <p className="text-gray-900 font-black text-2xl">{total}</p>
+          <p className="text-gray-500 text-xs font-semibold mt-0.5">Sessions logged</p>
+        </div>
+        <div className="bg-gray-50 rounded-2xl p-3 text-center">
+          <p className="text-gray-900 font-black text-2xl">{streak}</p>
+          <p className="text-gray-500 text-xs font-semibold mt-0.5">Day streak</p>
+        </div>
+      </div>
+
+      {stamina > 0 && (
+        <div className="bg-gray-50 rounded-2xl p-3 mb-3 text-center">
+          <p className="text-gray-900 font-black text-2xl">{stamina}</p>
+          <p className="text-gray-500 text-xs font-semibold mt-0.5">Cardio minutes logged</p>
+        </div>
+      )}
+
+      {Object.keys(weeklyVolume).length > 0 && (
+        <div className="border border-gray-100 rounded-2xl p-3">
+          <p className="text-gray-500 text-xs font-bold tracking-wide mb-2">WEEKLY VOLUME (last 7 days)</p>
+          {Object.entries(weeklyVolume)
+            .sort((a, b) => b[1] - a[1])
+            .map(([group, sets]) => {
+              const pct = Math.min(100, (sets / WEEKLY_VOLUME_TARGET) * 100);
+              const hit = sets >= WEEKLY_VOLUME_TARGET;
+              return (
+                <div key={group} className="mb-2 last:mb-0">
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span className="text-gray-700">{group}</span>
+                    <span className={hit ? "text-emerald-700 font-bold" : "text-gray-500"}>
+                      {sets}/{WEEKLY_VOLUME_TARGET} sets
+                    </span>
+                  </div>
+                  <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+                    <div className={`h-full rounded-full ${hit ? "bg-emerald-500" : "bg-blue-500"}`} style={{ width: `${pct}%` }} />
+                  </div>
+                </div>
+              );
+            })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProgressBar({ done, total }) {
+  const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+  return (
+    <div className="mb-3">
+      <div className="flex items-center justify-between text-xs font-semibold text-gray-500 mb-1">
+        <span>Today's progress</span>
+        <span>
+          {done} / {total}
+        </span>
+      </div>
+      <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-full bg-blue-500 rounded-full transition-all" style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function DailyQuestBox({ done, total, label, goals, expanded, onToggleExpand }) {
+  const complete = done >= total && total > 0;
+  return (
+    <div
+      key={complete ? "complete" : "incomplete"}
+      className="relative fade-in rounded-3xl p-4 mb-4 border border-gray-100 bg-white shadow-sm"
+    >
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-gray-900 font-bold text-base">{label}</p>
+        <span className="text-xs font-semibold text-gray-400">
+          {done}/{total} done
+        </span>
+      </div>
+
+      {complete && !expanded ? (
+        <button onClick={onToggleExpand} className="w-full text-left">
+          <p className="text-emerald-700 text-sm font-bold text-center border-t border-gray-100 pt-3">All done for today ✓</p>
+          <p className="text-gray-400 text-xs text-center mt-1 underline underline-offset-2">Show exercises</p>
+        </button>
+      ) : (
+        <>
+          <p className="text-gray-500 font-semibold text-xs tracking-wide mb-2">TODAY'S EXERCISES</p>
+          <div className="space-y-1.5 mb-3">
+            {goals.map((g) => (
+              <div key={g.label} className="flex items-center justify-between">
+                <span className={`text-xs ${g.done ? "text-gray-500" : "text-gray-900"}`}>{g.label}</span>
+                {g.done ? (
+                  <span className="text-emerald-700 text-xs font-bold">[✓]</span>
+                ) : (
+                  <span className="text-gray-300 text-xs font-bold">[ ]</span>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="border-t border-gray-100 pt-2">
+            {complete ? (
+              <>
+                <p className="text-emerald-700 text-xs font-bold text-center mb-1">All exercises logged for today ✓</p>
+                <button onClick={onToggleExpand} className="w-full text-center text-gray-500 text-xs underline underline-offset-2">
+                  Hide goals
+                </button>
+              </>
+            ) : (
+              <p className="text-gray-500 text-xs">
+                <span className="text-red-600 font-bold">Note:</span> skipping a day just means starting fresh tomorrow — no penalty, just momentum.
+              </p>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function BonusQuestScreen({ cardioHistory, machine, onMachineChange, minutes, onMinutesChange, onLog, onClose }) {
+  const todayEntry = cardioLoggedToday(cardioHistory);
+  return (
+    <div className="fixed inset-0 z-50 bg-gray-50 flex flex-col items-center justify-center px-6">
+      <div className="relative bg-white border-2 border-emerald-500 w-full max-w-xs p-5 rounded-3xl">
+        <div className="flex items-center justify-between border-b border-emerald-900 pb-2 mb-4">
+          <p className="text-emerald-700 font-black tracking-widest text-sm">OPTIONAL: CARDIO</p>
+          <button onClick={onClose} className="text-gray-500 text-xs font-semibold border border-gray-100 rounded-full px-2.5 py-1">
+            Close
+          </button>
+        </div>
+
+        {todayEntry ? (
+          <div className="text-center">
+            <p className="text-emerald-700 text-sm font-bold mb-4">
+              ✓ {todayEntry.machine} · {todayEntry.minutes} min — Stamina increased!
+            </p>
+            <button onClick={onClose} className="w-full bg-emerald-600 text-gray-900 font-bold text-sm px-6 py-2.5 rounded-lg">
+              Nice!
+            </button>
+          </div>
+        ) : (
+          <div>
+            <p className="text-gray-700 text-xs text-center mb-4">Main workout cleared. Take on an optional cardio challenge for a Stamina boost?</p>
+            <div className="flex flex-wrap gap-1 mb-3 justify-center">
+              {CARDIO_MACHINES.map((m) => (
+                <button
+                  key={m}
+                  onClick={() => onMachineChange(m)}
+                  className={`text-xs font-semibold px-2 py-1 rounded-full border ${machine === m ? "bg-emerald-600 border-emerald-400 text-gray-900" : "bg-gray-50 border-emerald-800 text-gray-700"}`}
+                >
+                  {m}
+                </button>
+              ))}
+            </div>
+            <div className="flex items-center gap-1.5 mb-3">
+              <input
+                type="number"
+                inputMode="numeric"
+                value={minutes}
+                onChange={(e) => onMinutesChange(e.target.value)}
+                placeholder="Minutes"
+                className="flex-1 bg-gray-50 border border-emerald-800 rounded-lg px-2 py-2 text-xs text-gray-900"
+              />
+              <button onClick={onLog} disabled={!minutes} className={`text-xs font-bold px-4 py-2 rounded-lg ${minutes ? "bg-emerald-600 text-gray-900" : "bg-gray-100 text-gray-400"}`}>
+                Log Cardio
+              </button>
+            </div>
+            <button onClick={onClose} className="w-full text-xs font-semibold text-gray-500 border border-gray-100 rounded-lg py-2">
+              Skip for now
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SlotCard({
+  slot,
+  activeOption,
+  history,
+  dayKey,
+  swapOpen,
+  onToggleSwap,
+  onSwap,
+  onAddCustomOption,
+  draft,
+  onDraftChange,
+  onLog,
+  isEditing,
+  onEditLast,
+  onCancelEdit,
+  onRemoveLast,
+  logStatus,
+  timerState,
+  onStartTimer,
+  onCancelTimer,
+  onExpandTimer,
+}) {
+  const last = getLast(history, activeOption.id);
+  const capped = isToppedOut(last, slot);
+  const alternatives = slot.options.filter((o) => o.id !== activeOption.id);
+  const repsArr = draft.reps || [];
+  const bossDefeated = loggedToday(history, activeOption.id);
+  const [showCustomSwap, setShowCustomSwap] = useState(false);
+  const [customSwapText, setCustomSwapText] = useState("");
+  const [cardExpanded, setCardExpanded] = useState(!bossDefeated);
+  const [showRpeSelector, setShowRpeSelector] = useState(false);
+  useEffect(() => {
+    if (bossDefeated) setCardExpanded(false);
+    // eslint-disable-next-line
+  }, [bossDefeated]);
+  const hasReps = repsArr.some((r) => r !== "" && r !== undefined && !isNaN(parseInt(r, 10)));
+  const hasWeight = slot.bodyweight || (draft.weight && draft.weight !== "");
+  const canLog = hasReps && hasWeight;
+  const noteText = activeOption.note || slot.note;
+  const timerActive = !!timerState;
+  const timerDone = !!timerState && timerState.remaining <= 0;
+
+  // Pre-fill weight AND reps from the most recent session the first time this
+  // option is shown, so a repeat session just needs a glance-and-confirm
+  // rather than re-typing every field - the core speed pattern from apps
+  // like Strong/Hevy, important for anyone with limited gym time.
+  useEffect(() => {
+    if (!last) return;
+    if (!slot.bodyweight && (!draft.weight || draft.weight === "") && isNumericWeight(last.weight)) {
+      onDraftChange("weight", last.weight);
+    }
+    if (last.reps && last.reps.length > 0) {
+      last.reps.forEach((r, i) => {
+        if (i < slot.sets && (draft.reps || [])[i] === undefined) {
+          onDraftChange("reps", String(r), i);
+        }
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeOption.id]);
+
+  if (bossDefeated && !cardExpanded) {
+    return (
+      <button
+        onClick={() => setCardExpanded(true)}
+        className="relative w-full text-left bg-white border border-emerald-800 p-3 mb-3 flex items-center justify-between gap-2 rounded-2xl"
+      >
+        <div className="min-w-0">
+          <p className="text-gray-900 font-bold text-sm truncate">{slot.label}</p>
+          <p className="text-emerald-700 text-xs font-semibold truncate">
+            ✓ {activeOption.name} — {last && !last.isBaseline ? `${last.weight === "BW" ? "BW" : last.weight + " lb"} × ${last.reps.join(", ")}` : "logged"}
+          </p>
+        </div>
+        <span className="text-gray-500 text-xs font-semibold shrink-0">Expand ▾</span>
+      </button>
+    );
+  }
+
+  return (
+    <div
+      className={`relative bg-white border p-4 mb-3 shadow-lg ${isEditing ? "border-blue-500 shadow-sm" : "border-gray-100 shadow-sm"} rounded-2xl`}
+    >
+      <div className="flex items-center justify-between mb-1">
+        <h3 className="text-gray-400 font-semibold text-xs uppercase tracking-wide">{slot.label}</h3>
+        {bossDefeated ? (
+          <button onClick={() => setCardExpanded(false)} className="text-gray-400 text-xs font-semibold underline underline-offset-2">
+            Collapse
+          </button>
+        ) : (
+          <span className="text-gray-400 text-xs font-mono">{slot.target}</span>
+        )}
+      </div>
+
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-gray-900 font-bold text-lg leading-snug">{activeOption.name}</span>
+        <div className="flex items-center gap-1.5 shrink-0">
+          {timerActive && <RestTimer timerState={timerState} onExpand={onExpandTimer} />}
+          <button
+            onClick={timerActive ? onCancelTimer : onStartTimer}
+            className={
+              timerDone
+                ? "text-xs font-bold text-white bg-blue-400 border border-blue-300 rounded-full px-2.5 py-1 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                : "text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-2.5 py-1 active:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            }
+          >
+            {timerDone ? "End Break" : timerActive ? "Cancel" : `Rest ${formatMMSS(slot.restSeconds)}`}
+          </button>
+          <button
+            onClick={onToggleSwap}
+            className="flex items-center gap-1 text-xs font-bold uppercase tracking-wide text-gray-500 active:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded px-1.5 py-1"
+          >
+            <span>&#8644;</span>
+            {swapOpen ? "Cancel" : "Swap"}
+          </button>
+        </div>
+      </div>
+
+      {slot.cues && slot.cues.length > 0 && <p className="text-gray-500 text-sm mt-1 leading-snug">{slot.cues[0]}</p>}
+
+      {noteText && <p className="text-gray-400 text-xs italic mt-1.5">{noteText}</p>}
+
+      {swapOpen && (
+        <div className="mt-2 pt-2 border-t border-gray-100">
+          <div className="flex flex-wrap gap-1.5">
+            {alternatives.map((o) => (
+              <button
+                key={o.id}
+                onClick={() => onSwap(o.id)}
+                className="px-3 py-1.5 rounded-full bg-gray-50 border border-gray-100 text-gray-900 text-xs active:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                {o.name}
+              </button>
+            ))}
+          </div>
+          {!showCustomSwap ? (
+            <button onClick={() => setShowCustomSwap(true)} className="mt-2 text-xs font-semibold text-blue-600 underline underline-offset-2">
+              + Type your own exercise
+            </button>
+          ) : (
+            <div className="mt-2 flex items-center gap-1.5">
+              <input
+                type="text"
+                value={customSwapText}
+                onChange={(e) => setCustomSwapText(e.target.value)}
+                placeholder="Exercise name"
+                className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-gray-900"
+              />
+              <button
+                onClick={() => {
+                  if (!customSwapText.trim()) return;
+                  onAddCustomOption(customSwapText.trim());
+                  setCustomSwapText("");
+                  setShowCustomSwap(false);
+                }}
+                disabled={!customSwapText.trim()}
+                className={`text-xs font-bold px-3 py-1.5 rounded-full shrink-0 ${customSwapText.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}
+              >
+                Use it
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="mt-3 text-xs min-h-4">
+        {!last && <span className="text-gray-500 italic">No history yet — log today to start tracking</span>}
+        {last && last.isBaseline && (
+          <span className="text-gray-500">
+            Reported baseline: <span className="font-mono text-gray-900 tracking-wide">{last.weight} lb</span>
+          </span>
+        )}
+        {last && !last.isBaseline && (
+          <span className="text-gray-500">
+            Last time ({last.date}):{" "}
+            <span className="font-mono text-gray-900 tracking-wide">
+              {slot.bodyweight ? "BW" : `${last.weight} lb`} × {last.reps.join(", ")}
+            </span>{" "}
+            <button onClick={onEditLast} className="text-gray-500 underline underline-offset-2 focus:outline-none">
+              Edit
+            </button>{" "}
+            <button onClick={onRemoveLast} className="text-red-600 underline underline-offset-2 focus:outline-none">
+              Remove
+            </button>
+          </span>
+        )}
+        {capped && !isEditing && (
+          <div className="fade-in flex items-center gap-1 mt-1 text-blue-600 font-bold border border-blue-500 rounded-lg px-2 py-1.5">
+            <span>&#8593;</span>
+            <span>STAT THRESHOLD REACHED — increase load next session</span>
+          </div>
+        )}
+        {isEditing && (
+          <div className="mt-1 text-blue-600 font-semibold">
+            Editing last entry —{" "}
+            <button onClick={onCancelEdit} className="underline underline-offset-2 focus:outline-none">
+              cancel
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-3 flex items-center gap-1.5 flex-wrap">
+        {!slot.bodyweight && (
+          <input
+            type="text"
+            inputMode="decimal"
+            placeholder="lb"
+            value={draft.weight || ""}
+            onChange={(e) => onDraftChange("weight", e.target.value)}
+            className="w-14 bg-gray-50 border border-gray-100 rounded-lg px-1 py-2 text-center text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        )}
+        {Array.from({ length: slot.sets }).map((_, i) => (
+          <input
+            key={i}
+            type="number"
+            inputMode="numeric"
+            placeholder={`S${i + 1}`}
+            value={repsArr[i] || ""}
+            onChange={(e) => onDraftChange("reps", e.target.value, i)}
+            className="w-11 bg-gray-50 border border-gray-100 rounded-lg px-1 py-2 text-center text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        ))}
+        <button
+          onClick={onLog}
+          disabled={!canLog}
+          className={`ml-auto flex items-center gap-1 font-bold text-xs uppercase tracking-wide px-4 py-2.5 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+            canLog ? "bg-blue-500 text-white active:scale-95" : "bg-gray-100 text-gray-500"
+          }`}
+        >
+          {logStatus ? (
+            <>
+              &#10003; {logStatus}
+            </>
+          ) : isEditing ? (
+            "Update"
+          ) : (
+            "Log"
+          )}
+        </button>
+      </div>
+
+      {!showRpeSelector && !draft.rpe ? (
+        <button onClick={() => setShowRpeSelector(true)} className="text-xs text-gray-400 underline underline-offset-2 mt-2">
+          + Add RPE (optional)
+        </button>
+      ) : (
+        <div className="flex items-center gap-1 mt-2">
+          <span className="text-gray-400 text-xs mr-1">RPE:</span>
+          {[6, 7, 8, 9, 10].map((n) => (
+            <button
+              key={n}
+              onClick={() => onDraftChange("rpe", draft.rpe === n ? null : n)}
+              className={`w-7 h-7 rounded-full text-xs font-bold border ${draft.rpe === n ? "bg-blue-500 border-blue-400 text-gray-900" : "bg-gray-50 border-gray-100 text-gray-700"}`}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function HistoryView({ history }) {
+  const optionsWithHistory = Object.keys(OPTION_INDEX).filter((id) => (history[id] || []).some((e) => !e.isBaseline));
+  const [selected, setSelected] = useState(null);
+  const effectiveSelected = selected && optionsWithHistory.includes(selected) ? selected : optionsWithHistory[0];
+
+  if (optionsWithHistory.length === 0) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center">
+        <p className="text-gray-500 text-sm">Log a few sessions and your history will show up here.</p>
+      </div>
+    );
+  }
+
+  const entries = (history[effectiveSelected] || []).filter((e) => !e.isBaseline);
+  const chartData = entries.map((e) => ({ date: e.date, weight: parseWeightNum(e.weight) })).filter((d) => d.weight != null);
+
+  return (
+    <div>
+      <div className="flex flex-wrap gap-1.5 mb-4">
+        {optionsWithHistory.map((id) => (
+          <button
+            key={id}
+            onClick={() => setSelected(id)}
+            className={`text-xs font-semibold px-3 py-1.5 rounded-full border focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+              effectiveSelected === id ? "bg-blue-500 text-white border-blue-500" : "border-gray-100 text-gray-500 bg-white"
+            }`}
+          >
+            {OPTION_INDEX[id]?.name || id}
+          </button>
+        ))}
+      </div>
+
+      <h3 className="font-black text-gray-900 uppercase tracking-wide text-xs mb-0.5">{OPTION_INDEX[effectiveSelected]?.muscleGroup}</h3>
+      <h2 className="font-bold text-gray-900 text-base mb-3">{OPTION_INDEX[effectiveSelected]?.name}</h2>
+
+      {chartData.length >= 2 ? (
+        <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-4">
+          <p className="text-gray-500 text-xs italic">(Graph view isn't available in this standalone version — session list below.)</p>
+        </div>
+      ) : (
+        <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-4">
+          <p className="text-gray-500 text-xs italic">Log a couple more numeric sessions here to see them listed.</p>
+        </div>
+      )}
+
+      <div className="space-y-1.5">
+        {entries
+          .slice()
+          .reverse()
+          .map((e, i) => (
+            <div key={i} className="flex items-center justify-between bg-white border border-gray-100 rounded-lg px-3 py-2 text-sm">
+              <span className="text-gray-500">{e.date}</span>
+              <span className="font-mono text-gray-900">
+                {e.weight === "BW" ? "BW" : `${e.weight} lb`} × {e.reps.join(", ")}
+              </span>
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+}
+
+function BackupSection({ onExport, onImport }) {
+  const [showImport, setShowImport] = useState(false);
+  const [text, setText] = useState("");
+  const [status, setStatus] = useState("");
+
+  function handleLoad() {
+    try {
+      const parsed = JSON.parse(text);
+      if (!parsed || typeof parsed !== "object" || !parsed.history) throw new Error("bad format");
+      onImport(parsed.history, parsed.activeOptions || {});
+      setStatus("Restored from backup.");
+      setText("");
+      setShowImport(false);
+    } catch (e) {
+      setStatus("Couldn't read that file — make sure it's a backup exported from this app.");
+    }
+  }
+
+  return (
+    <div className="mt-6 bg-white rounded-2xl border border-gray-100 p-4">
+      <h3 className="text-gray-900 font-black uppercase tracking-wide text-xs mb-1">Backup</h3>
+      <p className="text-gray-500 text-xs mb-3">Download a copy of your logged data, independent of Claude's storage.</p>
+      <div className="flex items-center gap-2 flex-wrap">
+        <button onClick={onExport} className="text-xs font-bold uppercase tracking-wide px-4 py-2.5 rounded-lg bg-blue-500 text-white active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400">
+          Download Backup
+        </button>
+        <button onClick={() => setShowImport((v) => !v)} className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-2 active:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400">
+          {showImport ? "Cancel" : "Restore from Backup"}
+        </button>
+      </div>
+      {showImport && (
+        <div className="mt-3">
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Paste the contents of a backup .json file here"
+            className="w-full h-24 bg-gray-50 border border-gray-100 rounded-lg p-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <button onClick={handleLoad} disabled={!text.trim()} className={`mt-2 text-xs font-bold uppercase tracking-wide px-4 py-2 rounded-lg ${text.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-500"}`}>
+            Load Backup
+          </button>
+        </div>
+      )}
+      {status && <p className="text-xs text-blue-600 font-semibold mt-2">{status}</p>}
+    </div>
+  );
+}
+
+function WorkoutTracker() {
+  const [activeDay, setActiveDay] = useState(getDefaultDay());
+  const [history, setHistory] = useState({});
+  const [activeOptions, setActiveOptions] = useState({});
+  const [loaded, setLoaded] = useState(false);
+  const [swapOpenSlot, setSwapOpenSlot] = useState(null);
+  const [drafts, setDrafts] = useState({});
+  const [logStatus, setLogStatus] = useState({});
+  const [editingOptions, setEditingOptions] = useState({});
+  const [resetArmed, setResetArmed] = useState(false);
+  const [syncStatus, setSyncStatus] = useState({ state: "idle", time: null });
+  const [timers, setTimers] = useState({});
+  const [fullScreenTimerSlot, setFullScreenTimerSlot] = useState(null);
+  const [showTrophyRoom, setShowTrophyRoom] = useState(false);
+  const [showPlateCalc, setShowPlateCalc] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+  const [showMyMaxes, setShowMyMaxes] = useState(false);
+  const [showSavedToast, setShowSavedToast] = useState(false);
+  const [currentScreen, setCurrentScreen] = useState("day");
+  const [showMenu, setShowMenu] = useState(false);
+  const [appPhase, setAppPhase] = useState("loading");
+  const [menuNewProfileName, setMenuNewProfileName] = useState("");
+  const [showMenuCreate, setShowMenuCreate] = useState(false);
+  const [questExpanded, setQuestExpanded] = useState({});
+  const [customExercises, setCustomExercises] = useState({ day1: [], day2: [], day3: [], day4: [] });
+  const [customSlotOptions, setCustomSlotOptions] = useState({});
+  const [hiddenSlots, setHiddenSlots] = useState({ day1: [], day2: [], day3: [], day4: [] });
+  const [cardioHistory, setCardioHistory] = useState([]);
+  const [manualMaxes, setManualMaxes] = useState([]);
+  const [showCardioForm, setShowCardioForm] = useState(false);
+  const [showDailyRecap, setShowDailyRecap] = useState(false);
+  const [showBonusQuest, setShowBonusQuest] = useState(false);
+  const questWasCompleteRef = React.useRef({});
+  const [cardioMachine, setCardioMachine] = useState("Treadmill");
+  const [cardioMinutes, setCardioMinutes] = useState("");
+  const [profiles, setProfiles] = useState({});
+  const [activeProfileId, setActiveProfileId] = useState("default");
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showNewProfileForm, setShowNewProfileForm] = useState(false);
+  const [builderMode, setBuilderMode] = useState("quick");
+  const [manualDayCount, setManualDayCount] = useState(3);
+  const [manualDays, setManualDays] = useState([[], [], []]);
+  const [manualExpandedDay, setManualExpandedDay] = useState(0);
+  const [newProfileName, setNewProfileName] = useState("");
+  const [newPlanDayCount, setNewPlanDayCount] = useState(3);
+  const [newPlanDayMuscles, setNewPlanDayMuscles] = useState([[], [], []]);
+  const [renamingProfile, setRenamingProfile] = useState(false);
+  const [profileNameDraft, setProfileNameDraft] = useState("");
+  const [showAddExercise, setShowAddExercise] = useState(false);
+  const [newExerciseName, setNewExerciseName] = useState("");
+  const [newExerciseDay, setNewExerciseDay] = useState("day1");
+
+  useEffect(() => {
+    let loadedProfiles = null;
+    let loadedActiveId = "default";
+    try {
+      const raw = localStorage.getItem("hunterLogState");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed.profiles) {
+          loadedProfiles = parsed.profiles;
+          loadedActiveId = parsed.activeProfileId && parsed.profiles[parsed.activeProfileId] ? parsed.activeProfileId : Object.keys(parsed.profiles)[0];
+        } else if (parsed.history || parsed.activeOptions) {
+          // Old single-plan save format - migrate it into a named default profile so existing data isn't lost.
+          loadedProfiles = {
+            default: {
+              name: DEFAULT_PROFILE_NAME,
+              history: parsed.history || {},
+              activeOptions: parsed.activeOptions || {},
+              customExercises: parsed.customExercises || emptyDayMap(),
+              customSlotOptions: parsed.customSlotOptions || {},
+              hiddenSlots: parsed.hiddenSlots || emptyDayMap(),
+            },
+          };
+          loadedActiveId = "default";
+        }
+      }
+    } catch (e) {
+      loadedProfiles = null;
+    }
+    if (!loadedProfiles || Object.keys(loadedProfiles).length === 0) {
+      loadedProfiles = { default: freshProfileData(DEFAULT_PROFILE_NAME, true) };
+      loadedActiveId = "default";
+    }
+    const active = loadedProfiles[loadedActiveId];
+    setProfiles(loadedProfiles);
+    setActiveProfileId(loadedActiveId);
+    setHistory(active.history && Object.keys(active.history).length ? active.history : buildSeedHistory());
+    setActiveOptions(active.activeOptions || {});
+    setCustomExercises(active.customExercises || emptyDayMap());
+    setCustomSlotOptions(active.customSlotOptions || {});
+    setHiddenSlots(active.hiddenSlots || emptyDayMap());
+    setCardioHistory(active.cardioHistory || []);
+    setManualMaxes(active.manualMaxes || []);
+    const initialDayKeys = Object.keys(resolveProfileDays(active));
+    if (!initialDayKeys.includes(activeDay)) {
+      setActiveDay(getDefaultDayForCount(initialDayKeys.length));
+    }
+    setLoaded(true);
+    setTimeout(() => setAppPhase("mainMenu"), 250);
+  }, []);
+
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setTimers((prev) => {
+        const activeIds = Object.keys(prev).filter((id) => prev[id].running);
+        if (activeIds.length === 0) return prev;
+        const next = { ...prev };
+        activeIds.forEach((id) => {
+          const remaining = next[id].remaining - 1;
+          next[id] = remaining <= 0 ? { remaining: 0, running: false } : { remaining, running: true };
+        });
+        return next;
+      });
+    }, 1000);
+    return () => clearInterval(iv);
+  }, []);
+
+  async function persist(newHistory, newActiveOptions, newCustom, newCustomOpts, newHidden, newCardio, newMaxes) {
+    setSyncStatus({ state: "saving", time: null });
+    try {
+      const existing = profiles[activeProfileId] || {};
+      const updatedProfiles = {
+        ...profiles,
+        [activeProfileId]: {
+          ...existing,
+          name: existing.name || DEFAULT_PROFILE_NAME,
+          history: newHistory,
+          activeOptions: newActiveOptions,
+          customExercises: newCustom || customExercises,
+          customSlotOptions: newCustomOpts || customSlotOptions,
+          hiddenSlots: newHidden || hiddenSlots,
+          cardioHistory: newCardio || cardioHistory,
+          manualMaxes: newMaxes || manualMaxes,
+        },
+      };
+      localStorage.setItem("hunterLogState", JSON.stringify({ schemaVersion: CURRENT_SCHEMA_VERSION, activeProfileId, profiles: updatedProfiles }));
+      setProfiles(updatedProfiles);
+      setSyncStatus({ state: "synced", time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) });
+      setShowSavedToast(true);
+      setTimeout(() => setShowSavedToast(false), 1600);
+    } catch (e) {
+      setSyncStatus({ state: "error", time: null });
+    }
+  }
+
+  function loadProfileIntoState(data) {
+    setHistory(data.history && Object.keys(data.history).length ? data.history : {});
+    setActiveOptions(data.activeOptions || {});
+    setCustomExercises(data.customExercises || emptyDayMap());
+    setCustomSlotOptions(data.customSlotOptions || {});
+    setHiddenSlots(data.hiddenSlots || emptyDayMap());
+    setCardioHistory(data.cardioHistory || []);
+    setManualMaxes(data.manualMaxes || []);
+    const days = resolveProfileDays(data);
+    const dayKeys = Object.keys(days);
+    if (activeDay !== "history" && !dayKeys.includes(activeDay)) {
+      setActiveDay(getDefaultDayForCount(dayKeys.length));
+    }
+  }
+
+  function currentProfileSnapshot() {
+    const existing = profiles[activeProfileId] || {};
+    return { ...existing, name: existing.name || DEFAULT_PROFILE_NAME, history, activeOptions, customExercises, customSlotOptions, hiddenSlots, cardioHistory, manualMaxes };
+  }
+
+  function switchToProfile(targetId) {
+    if (targetId === activeProfileId) {
+      setShowProfileMenu(false);
+      setCurrentScreen("day");
+      return;
+    }
+    const updatedProfiles = { ...profiles, [activeProfileId]: currentProfileSnapshot() };
+    const target = updatedProfiles[targetId];
+    if (!target) return;
+    setProfiles(updatedProfiles);
+    setActiveProfileId(targetId);
+    loadProfileIntoState(target);
+    setShowProfileMenu(false);
+    setCurrentScreen("day");
+    localStorage.setItem("hunterLogState", JSON.stringify({ schemaVersion: CURRENT_SCHEMA_VERSION, activeProfileId: targetId, profiles: updatedProfiles }));
+  }
+
+  function toggleDayCount(delta) {
+    const next = Math.max(1, Math.min(7, newPlanDayCount + delta));
+    setNewPlanDayCount(next);
+    setNewPlanDayMuscles((prev) => {
+      const copy = prev.slice(0, next);
+      while (copy.length < next) copy.push([]);
+      return copy;
+    });
+  }
+
+  function toggleMuscleForDay(dayIndex, group) {
+    setNewPlanDayMuscles((prev) => {
+      const copy = prev.map((arr) => [...arr]);
+      const set = copy[dayIndex];
+      const pos = set.indexOf(group);
+      if (pos >= 0) set.splice(pos, 1);
+      else set.push(group);
+      return copy;
+    });
+  }
+
+  function createProfile() {
+    const name = newProfileName.trim();
+    if (!name) return;
+    const days = newPlanDayMuscles.map((groups) => ({ muscleGroups: groups, label: labelForMuscleGroups(groups) }));
+    const planStructure = { dayCount: newPlanDayCount, days };
+    const id = `profile_${Date.now()}`;
+    const updatedProfiles = {
+      ...profiles,
+      [activeProfileId]: currentProfileSnapshot(),
+      [id]: freshProfileData(name, false, planStructure),
+    };
+    setProfiles(updatedProfiles);
+    setActiveProfileId(id);
+    loadProfileIntoState(updatedProfiles[id]);
+    setNewProfileName("");
+    setNewPlanDayCount(3);
+    setNewPlanDayMuscles([[], [], []]);
+    setShowNewProfileForm(false);
+    setShowProfileMenu(false);
+    localStorage.setItem("hunterLogState", JSON.stringify({ schemaVersion: CURRENT_SCHEMA_VERSION, activeProfileId: id, profiles: updatedProfiles }));
+  }
+
+  function toggleManualDayCount(delta) {
+    const next = Math.max(1, Math.min(7, manualDayCount + delta));
+    setManualDayCount(next);
+    setManualDays((prev) => {
+      const copy = prev.slice(0, next);
+      while (copy.length < next) copy.push([]);
+      return copy;
+    });
+    if (manualExpandedDay >= next) setManualExpandedDay(0);
+  }
+
+  function toggleManualExercise(dayIdx, slotId) {
+    setManualDays((prev) => {
+      const copy = prev.map((arr) => [...arr]);
+      const list = copy[dayIdx];
+      const pos = list.indexOf(slotId);
+      if (pos >= 0) list.splice(pos, 1);
+      else list.push(slotId);
+      return copy;
+    });
+  }
+
+  function createManualProfile() {
+    const name = newProfileName.trim();
+    if (!name) return;
+    const covered = coveredMuscleGroups(manualDays);
+    if (!FULL_BODY_REQUIREMENT.every((g) => covered.has(g))) return;
+    const days = manualDays.map((slotIds) => {
+      const groups = [...new Set(slotIds.map((id) => ALL_SLOTS.find((s) => s.slotId === id)?.muscleGroup).filter(Boolean))];
+      return { slotIds, muscleGroups: groups, label: labelForMuscleGroups(groups) };
+    });
+    const planStructure = { dayCount: manualDayCount, days };
+    const id = `profile_${Date.now()}`;
+    const updatedProfiles = {
+      ...profiles,
+      [activeProfileId]: currentProfileSnapshot(),
+      [id]: freshProfileData(name, false, planStructure),
+    };
+    setProfiles(updatedProfiles);
+    setActiveProfileId(id);
+    loadProfileIntoState(updatedProfiles[id]);
+    setNewProfileName("");
+    setManualDayCount(3);
+    setManualDays([[], [], []]);
+    setManualExpandedDay(0);
+    setBuilderMode("quick");
+    setShowNewProfileForm(false);
+    setShowProfileMenu(false);
+    localStorage.setItem("hunterLogState", JSON.stringify({ schemaVersion: CURRENT_SCHEMA_VERSION, activeProfileId: id, profiles: updatedProfiles }));
+  }
+
+  function renameActiveProfile() {
+    const name = profileNameDraft.trim();
+    if (!name) return;
+    const updatedProfiles = { ...profiles, [activeProfileId]: { ...currentProfileSnapshot(), name } };
+    setProfiles(updatedProfiles);
+    setRenamingProfile(false);
+    localStorage.setItem("hunterLogState", JSON.stringify({ schemaVersion: CURRENT_SCHEMA_VERSION, activeProfileId, profiles: updatedProfiles }));
+  }
+
+  function deleteProfile(id) {
+    const ids = Object.keys(profiles);
+    if (ids.length <= 1) return;
+    const updatedProfiles = { ...profiles };
+    delete updatedProfiles[id];
+    let nextActiveId = activeProfileId;
+    if (id === activeProfileId) {
+      nextActiveId = Object.keys(updatedProfiles)[0];
+      loadProfileIntoState(updatedProfiles[nextActiveId]);
+      setActiveProfileId(nextActiveId);
+    }
+    setProfiles(updatedProfiles);
+    localStorage.setItem("hunterLogState", JSON.stringify({ schemaVersion: CURRENT_SCHEMA_VERSION, activeProfileId: nextActiveId, profiles: updatedProfiles }));
+  }
+
+  function getActiveOptionId(slot) {
+    return activeOptions[slot.slotId] || slot.options[0].id;
+  }
+
+  function handleSwap(slot, optionId) {
+    const newActive = { ...activeOptions, [slot.slotId]: optionId };
+    setActiveOptions(newActive);
+    setSwapOpenSlot(null);
+    persist(history, newActive);
+  }
+
+  function handleDraftChange(optionId, field, value, index) {
+    setDrafts((prev) => {
+      const cur = prev[optionId] || { weight: "", reps: [] };
+      if (field === "reps") {
+        const reps = [...(cur.reps || [])];
+        reps[index] = value;
+        return { ...prev, [optionId]: { ...cur, reps } };
+      }
+      return { ...prev, [optionId]: { ...cur, [field]: value } };
+    });
+  }
+
+  function handleLog(slot) {
+    const optId = getActiveOptionId(slot);
+    const draft = drafts[optId] || {};
+    const repsArr = Array.from({ length: slot.sets }, (_, i) => parseInt((draft.reps || [])[i], 10)).filter((n) => !isNaN(n));
+    if (repsArr.length === 0) return;
+    if (!slot.bodyweight && !draft.weight) return;
+    const wasEditing = !!editingOptions[optId];
+    const entry = { date: todayLabel(), weight: slot.bodyweight ? "BW" : draft.weight, reps: repsArr, isBaseline: false, rpe: draft.rpe || null };
+    const existing = history[optId] || [];
+    const newArr = wasEditing ? [...existing.slice(0, -1), entry] : [...existing, entry];
+    const newHistory = { ...history, [optId]: newArr };
+    setHistory(newHistory);
+    persist(newHistory, activeOptions);
+    setDrafts((prev) => ({ ...prev, [optId]: { weight: "", reps: [], rpe: null } }));
+    if (wasEditing) setEditingOptions((prev) => ({ ...prev, [optId]: false }));
+    setLogStatus((prev) => ({ ...prev, [slot.slotId]: wasEditing ? "Updated" : "Logged" }));
+    setTimeout(() => setLogStatus((prev) => ({ ...prev, [slot.slotId]: null })), 1800);
+  }
+
+  function handleEditLast(slot, activeOption) {
+    const last = getLast(history, activeOption.id);
+    if (!last || last.isBaseline) return;
+    setDrafts((prev) => ({
+      ...prev,
+      [activeOption.id]: { weight: isNumericWeight(last.weight) ? last.weight : "", reps: last.reps.map((r) => String(r)) },
+    }));
+    setEditingOptions((prev) => ({ ...prev, [activeOption.id]: true }));
+    setLogStatus((prev) => ({ ...prev, [slot.slotId]: null }));
+  }
+
+  function handleCancelEdit(activeOption) {
+    setEditingOptions((prev) => ({ ...prev, [activeOption.id]: false }));
+    setDrafts((prev) => ({ ...prev, [activeOption.id]: { weight: "", reps: [] } }));
+  }
+
+  function handleRemoveLast(activeOption) {
+    const existing = history[activeOption.id] || [];
+    if (existing.length === 0) return;
+    const newHistory = { ...history, [activeOption.id]: existing.slice(0, -1) };
+    setHistory(newHistory);
+    persist(newHistory, activeOptions);
+    setEditingOptions((prev) => ({ ...prev, [activeOption.id]: false }));
+  }
+
+  function startTimer(slot) {
+    setTimers((prev) => ({ ...prev, [slot.slotId]: { remaining: slot.restSeconds, running: true } }));
+    setFullScreenTimerSlot(slot.slotId);
+  }
+
+  function cancelTimer(slot) {
+    setTimers((prev) => {
+      const next = { ...prev };
+      delete next[slot.slotId];
+      return next;
+    });
+    if (fullScreenTimerSlot === slot.slotId) setFullScreenTimerSlot(null);
+  }
+
+  function handleExport() {
+    const dataStr = JSON.stringify({ history, activeOptions, exportedAt: todayLabel() }, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `plate-log-backup-${todayLabel().replace(/\s+/g, "-")}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function handleImport(importedHistory, importedActiveOptions) {
+    setHistory(importedHistory);
+    setActiveOptions(importedActiveOptions);
+    persist(importedHistory, importedActiveOptions);
+  }
+
+  async function handleReset() {
+    if (!resetArmed) {
+      setResetArmed(true);
+      setTimeout(() => setResetArmed(false), 4000);
+      return;
+    }
+    const fresh = buildSeedHistory();
+    setHistory(fresh);
+    setActiveOptions({});
+    setDrafts({});
+    setTimers({});
+    setEditingOptions({});
+    setResetArmed(false);
+    persist(fresh, {});
+  }
+
+  const isHistoryTab = activeDay === "history";
+  const programForProfile = useMemo(() => resolveProfileDays(profiles[activeProfileId]), [profiles, activeProfileId]);
+  const baseDay = !isHistoryTab ? programForProfile[activeDay] : null;
+  const day = useMemo(
+    () => (baseDay ? mergedDaySlots(baseDay, customExercises[activeDay], customSlotOptions, hiddenSlots[activeDay]) : null),
+    [baseDay, customExercises, activeDay, customSlotOptions, hiddenSlots]
+  );
+  const fullScreenSlot = fullScreenTimerSlot && day ? day.slots.find((s) => s.slotId === fullScreenTimerSlot) : null;
+  const fullScreenOption = fullScreenSlot ? fullScreenSlot.options.find((o) => o.id === getActiveOptionId(fullScreenSlot)) || fullScreenSlot.options[0] : null;
+  const groupedSlots = useMemo(() => (day ? groupSlotsByMuscle(day.slots) : []), [day]);
+  const doneCount = day ? day.slots.filter((s) => loggedToday(history, getActiveOptionId(s))).length : 0;
+  const questGoals = day ? day.slots.map((s) => ({ label: s.label, done: loggedToday(history, getActiveOptionId(s)) })) : [];
+  const totalSessions = useMemo(() => totalSessionsLogged(history), [history]);
+  const isQuestComplete = doneCount >= (day ? day.slots.length : 0) && day && day.slots.length > 0;
+  const todaysCardio = cardioLoggedToday(cardioHistory);
+
+  useEffect(() => {
+    if (!loaded || isHistoryTab) return;
+    const wasComplete = questWasCompleteRef.current[activeDay];
+    if (isQuestComplete && !wasComplete) {
+      setShowDailyRecap(true);
+    }
+    questWasCompleteRef.current[activeDay] = isQuestComplete;
+    // eslint-disable-next-line
+  }, [isQuestComplete, activeDay, loaded]);
+
+  // Safety-net auto-save: every existing action already saves immediately,
+  // but this catches anything unusual (e.g. a dropped call) so nothing is
+  // ever more than a few seconds from being persisted.
+  useEffect(() => {
+    if (!loaded) return;
+    const iv = setInterval(() => {
+      persist(history, activeOptions, customExercises, customSlotOptions, hiddenSlots, cardioHistory);
+    }, 30000);
+    return () => clearInterval(iv);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded, history, activeOptions, customExercises, customSlotOptions, hiddenSlots, cardioHistory]);
+
+  function handleSelectProfileFromMenu(id) {
+    switchToProfile(id);
+    setAppPhase("main");
+  }
+
+  function handleCreateFromMenu() {
+    const name = menuNewProfileName.trim();
+    if (!name) return;
+    const id = `profile_${Date.now()}`;
+    const updatedProfiles = { ...profiles, [activeProfileId]: currentProfileSnapshot(), [id]: freshProfileData(name, true) };
+    setProfiles(updatedProfiles);
+    setActiveProfileId(id);
+    loadProfileIntoState(updatedProfiles[id]);
+    setMenuNewProfileName("");
+    setShowMenuCreate(false);
+    localStorage.setItem("hunterLogState", JSON.stringify({ schemaVersion: CURRENT_SCHEMA_VERSION, activeProfileId: id, profiles: updatedProfiles }));
+    setAppPhase("main");
+  }
+
+  function handleManualSave() {
+    persist(history, activeOptions, customExercises, customSlotOptions, hiddenSlots, cardioHistory);
+  }
+
+  if (!loaded || appPhase === "loading") {
+    return <LoadingScreen />;
+  }
+
+  if (appPhase === "mainMenu") {
+    return (
+      <>
+        <MainMenuScreen
+          profiles={profiles}
+          onSelectProfile={handleSelectProfileFromMenu}
+          showCreate={showMenuCreate}
+          onToggleCreate={() => setShowMenuCreate(true)}
+          newName={menuNewProfileName}
+          onNewNameChange={setMenuNewProfileName}
+          onCreate={handleCreateFromMenu}
+          onSave={handleManualSave}
+          savedFlash={syncStatus.state === "synced"}
+          onOpenRecords={() => setShowTrophyRoom(true)}
+          onOpenMaxes={() => setShowMyMaxes(true)}
+          onOpenHelp={() => setShowHelp(true)}
+        />
+        {showTrophyRoom && <TrophyRoom history={history} onClose={() => setShowTrophyRoom(false)} />}
+        {showMyMaxes && (
+          <MyMaxesScreen maxes={manualMaxes} onAdd={handleAddManualMax} onDelete={handleDeleteManualMax} onClose={() => setShowMyMaxes(false)} />
+        )}
+        {showHelp && <HelpScreen onClose={() => setShowHelp(false)} />}
+      </>
+    );
+  }
+
+  const questIsExpanded = questExpanded[activeDay] !== undefined ? questExpanded[activeDay] : !isQuestComplete;
+
+  function toggleQuestExpand() {
+    setQuestExpanded((prev) => ({ ...prev, [activeDay]: !questIsExpanded }));
+  }
+
+
+  function handleAddCustomExercise() {
+    const name = newExerciseName.trim();
+    if (!name) return;
+    const tag = autoTagExercise(name);
+    const id = `custom_${Date.now()}`;
+    const entry = { id, name, muscleGroup: tag.muscleGroup, muscles: tag.muscles, cues: tag.cues };
+    const newCustom = { ...customExercises, [newExerciseDay]: [...(customExercises[newExerciseDay] || []), entry] };
+    setCustomExercises(newCustom);
+    persist(history, activeOptions, newCustom);
+    setNewExerciseName("");
+    setShowAddExercise(false);
+  }
+
+  function handleRemoveCustomExercise(dayKey, exerciseId) {
+    const newCustom = { ...customExercises, [dayKey]: (customExercises[dayKey] || []).filter((e) => e.id !== exerciseId) };
+    setCustomExercises(newCustom);
+    persist(history, activeOptions, newCustom);
+  }
+
+  function handleAddCustomOption(slot, name) {
+    const id = `customopt_${Date.now()}`;
+    const entry = { id, name };
+    const newCustomOpts = { ...customSlotOptions, [slot.slotId]: [...(customSlotOptions[slot.slotId] || []), entry] };
+    const newActive = { ...activeOptions, [slot.slotId]: id };
+    setCustomSlotOptions(newCustomOpts);
+    setActiveOptions(newActive);
+    setSwapOpenSlot(null);
+    persist(history, newActive, customExercises, newCustomOpts);
+  }
+
+  function handleAddAsAlternativeOnly(slot, name) {
+    const id = `customopt_${Date.now()}`;
+    const entry = { id, name };
+    const newCustomOpts = { ...customSlotOptions, [slot.slotId]: [...(customSlotOptions[slot.slotId] || []), entry] };
+    setCustomSlotOptions(newCustomOpts);
+    persist(history, activeOptions, customExercises, newCustomOpts);
+    setNewExerciseName("");
+    setShowAddExercise(false);
+  }
+
+  function handleHideSlot(dayKey, slotId) {
+    const newHidden = { ...hiddenSlots, [dayKey]: [...(hiddenSlots[dayKey] || []), slotId] };
+    setHiddenSlots(newHidden);
+    persist(history, activeOptions, customExercises, customSlotOptions, newHidden);
+  }
+
+  function handleRestoreSlot(dayKey, slotId) {
+    const newHidden = { ...hiddenSlots, [dayKey]: (hiddenSlots[dayKey] || []).filter((id) => id !== slotId) };
+    setHiddenSlots(newHidden);
+    persist(history, activeOptions, customExercises, customSlotOptions, newHidden);
+  }
+
+  function handleLogCardio() {
+    const minutes = parseInt(cardioMinutes, 10);
+    if (!minutes || minutes <= 0) return;
+    const entry = { date: todayLabel(), machine: cardioMachine, minutes };
+    const newCardio = [...cardioHistory, entry];
+    setCardioHistory(newCardio);
+    persist(history, activeOptions, customExercises, customSlotOptions, hiddenSlots, newCardio);
+    setCardioMinutes("");
+  }
+
+  function handleAddManualMax(exercise, weight, repRange) {
+    if (!exercise.trim() || !weight.trim()) return;
+    const entry = { id: `max_${Date.now()}`, exercise: exercise.trim(), weight: weight.trim(), repRange: repRange.trim() || "1", date: todayLabel() };
+    const newMaxes = [...manualMaxes, entry];
+    setManualMaxes(newMaxes);
+    persist(history, activeOptions, customExercises, customSlotOptions, hiddenSlots, cardioHistory, newMaxes);
+  }
+
+  function handleDeleteManualMax(id) {
+    const newMaxes = manualMaxes.filter((m) => m.id !== id);
+    setManualMaxes(newMaxes);
+    persist(history, activeOptions, customExercises, customSlotOptions, hiddenSlots, cardioHistory, newMaxes);
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 px-4 pt-6 pb-24">
+      <SystemStyles />
+
+      <SavedToast show={showSavedToast} />
+      <TimerFullScreen
+        slot={fullScreenSlot}
+        activeOption={fullScreenOption}
+        timerState={fullScreenSlot ? timers[fullScreenSlot.slotId] : null}
+        onClose={() => setFullScreenTimerSlot(null)}
+        onEndBreak={() => {
+          if (fullScreenSlot) cancelTimer(fullScreenSlot);
+          setFullScreenTimerSlot(null);
+        }}
+      />
+      <div className="flex items-center justify-between mb-1">
+        <button onClick={() => setShowMenu(true)} className="text-gray-900 text-2xl leading-none px-1 focus:outline-none">
+          ☰
+        </button>
+        <h1 className="text-gray-900 font-black uppercase tracking-tight text-xl">Workout Log</h1>
+        <button onClick={handleManualSave} className="text-blue-600 text-xs font-bold border border-blue-200 rounded-full px-2.5 py-1">
+          Save
+        </button>
+      </div>
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-gray-500 text-xs">{todayFullLabel()}</span>
+        <SyncBadge status={syncStatus} />
+      </div>
+      {showMenu && (
+        <HamburgerMenu
+          programForProfile={programForProfile}
+          activeDay={activeDay}
+          currentScreen={currentScreen}
+          planName={(profiles[activeProfileId] && profiles[activeProfileId].name) || DEFAULT_PROFILE_NAME}
+          onNavigate={(screen, dayKey) => {
+            if (screen === "trophy") {
+              setShowTrophyRoom(true);
+            } else if (screen === "plates") {
+              setShowPlateCalc(true);
+            } else if (screen === "help") {
+              setShowHelp(true);
+            } else if (screen === "maxes") {
+              setShowMyMaxes(true);
+            } else {
+              setCurrentScreen(screen);
+              if (dayKey) setActiveDay(dayKey);
+            }
+            setShowMenu(false);
+          }}
+          onClose={() => setShowMenu(false)}
+          onSave={() => {
+            handleManualSave();
+            setShowMenu(false);
+          }}
+          onQuickExport={() => {
+            handleExport();
+            setShowMenu(false);
+          }}
+          onReturnToMenu={() => {
+            setShowMenu(false);
+            setAppPhase("mainMenu");
+          }}
+        />
+      )}
+      {showTrophyRoom && <TrophyRoom history={history} onClose={() => setShowTrophyRoom(false)} />}
+      {showPlateCalc && <PlateCalculatorScreen onClose={() => setShowPlateCalc(false)} />}
+      {showHelp && <HelpScreen onClose={() => setShowHelp(false)} />}
+      {showMyMaxes && (
+        <MyMaxesScreen maxes={manualMaxes} onAdd={handleAddManualMax} onDelete={handleDeleteManualMax} onClose={() => setShowMyMaxes(false)} />
+      )}
+      {showDailyRecap && (
+        <DailyRecapScreen day={day} history={history} streak={computeStreak(history)} onClose={() => setShowDailyRecap(false)} />
+      )}
+      {showBonusQuest && (
+        <BonusQuestScreen
+          cardioHistory={cardioHistory}
+          machine={cardioMachine}
+          onMachineChange={setCardioMachine}
+          minutes={cardioMinutes}
+          onMinutesChange={setCardioMinutes}
+          onLog={handleLogCardio}
+          onClose={() => setShowBonusQuest(false)}
+        />
+      )}
+
+      {currentScreen === "profile" && (
+      <>
+      <div className="bg-white border border-gray-100 rounded-xl p-3 mb-4">
+        {!renamingProfile ? (
+          <div className="flex items-center justify-between gap-2">
+            <button onClick={() => setShowProfileMenu((v) => !v)} className="flex-1 text-left">
+              <p className="text-gray-500 text-xs">WORKOUT PLAN</p>
+              <p className="text-blue-600 font-bold text-sm">{(profiles[activeProfileId] && profiles[activeProfileId].name) || DEFAULT_PROFILE_NAME} ▾</p>
+            </button>
+            <button
+              onClick={() => {
+                setProfileNameDraft((profiles[activeProfileId] && profiles[activeProfileId].name) || DEFAULT_PROFILE_NAME);
+                setRenamingProfile(true);
+              }}
+              className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-1.5 shrink-0"
+            >
+              Rename
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1.5">
+            <input
+              type="text"
+              value={profileNameDraft}
+              onChange={(e) => setProfileNameDraft(e.target.value)}
+              className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-gray-900"
+            />
+            <button onClick={renameActiveProfile} disabled={!profileNameDraft.trim()} className={`text-xs font-bold px-3 py-1.5 rounded-full shrink-0 ${profileNameDraft.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}>
+              Save
+            </button>
+            <button onClick={() => setRenamingProfile(false)} className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-1.5 shrink-0">
+              Cancel
+            </button>
+          </div>
+        )}
+
+        {showProfileMenu && (
+          <div className="mt-3 pt-3 border-t border-gray-100">
+            {Object.entries(profiles).map(([id, p]) => (
+              <div key={id} className="flex items-center justify-between mb-1.5 last:mb-0">
+                <button onClick={() => switchToProfile(id)} className={`text-xs font-semibold text-left flex-1 ${id === activeProfileId ? "text-blue-600" : "text-gray-700"}`}>
+                  {id === activeProfileId ? "▸ " : ""}
+                  {p.name}
+                </button>
+                {Object.keys(profiles).length > 1 && (
+                  <button onClick={() => deleteProfile(id)} className="text-xs text-red-600 underline underline-offset-2 shrink-0 ml-2">
+                    Delete
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="mb-4">
+            {!showNewProfileForm ? (
+              <button onClick={() => setShowNewProfileForm(true)} className="mt-2 text-xs font-bold text-blue-600 underline underline-offset-2">
+                + Create new workout plan
+              </button>
+            ) : (
+              <div className="mt-3">
+                <input
+                  type="text"
+                  value={newProfileName}
+                  onChange={(e) => setNewProfileName(e.target.value)}
+                  placeholder="Plan name, e.g. Summer Cut Plan"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 text-xs text-gray-900 mb-3"
+                />
+
+                <div className="flex gap-1 mb-3 bg-gray-50 p-1 rounded-lg">
+                  <button
+                    onClick={() => setBuilderMode("quick")}
+                    className={`flex-1 py-1.5 rounded text-xs font-bold ${builderMode === "quick" ? "bg-blue-500 text-white" : "text-gray-500"}`}
+                  >
+                    Quick Setup
+                  </button>
+                  <button
+                    onClick={() => setBuilderMode("manual")}
+                    className={`flex-1 py-1.5 rounded text-xs font-bold ${builderMode === "manual" ? "bg-blue-500 text-white" : "text-gray-500"}`}
+                  >
+                    Build From Scratch
+                  </button>
+                </div>
+
+                {builderMode === "quick" && (
+                <>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-gray-700 text-xs font-bold">Days per week</span>
+                  <div className="flex items-center gap-3">
+                    <button onClick={() => toggleDayCount(-1)} className="w-7 h-7 rounded-full border border-gray-200 text-gray-900 font-bold text-sm">
+                      −
+                    </button>
+                    <span className="text-blue-600 font-black text-base w-4 text-center">{newPlanDayCount}</span>
+                    <button onClick={() => toggleDayCount(1)} className="w-7 h-7 rounded-full border border-gray-200 text-gray-900 font-bold text-sm">
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                {newPlanDayMuscles.map((selected, dayIdx) => (
+                  <div key={dayIdx} className="border border-gray-100 rounded-lg p-2.5 mb-2">
+                    <p className="text-gray-900 text-xs font-bold mb-1.5">
+                      Day {dayIdx + 1} <span className="text-gray-500 font-normal">— {labelForMuscleGroups(selected)}</span>
+                    </p>
+                    {MUSCLE_CHART.map((section) => (
+                      <div key={section.section} className="mb-1.5 last:mb-0">
+                        <p className="text-gray-500 text-xs mb-1">{section.section}</p>
+                        <div className="flex flex-wrap gap-1">
+                          {section.groups.map((group) => {
+                            const isSelected = selected.includes(group);
+                            return (
+                              <button
+                                key={group}
+                                onClick={() => toggleMuscleForDay(dayIdx, group)}
+                                className={`text-xs font-semibold px-2 py-1 rounded-full border ${
+                                  isSelected ? "bg-blue-500 border-blue-400 text-gray-900" : "bg-gray-50 border-gray-100 text-gray-700"
+                                }`}
+                              >
+                                {group}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+
+                <div className="flex items-center gap-1.5 mt-2">
+                  <button onClick={createProfile} disabled={!newProfileName.trim()} className={`text-xs font-bold px-3 py-1.5 rounded-full ${newProfileName.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}>
+                    Create Plan
+                  </button>
+                  <button onClick={() => setShowNewProfileForm(false)} className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-1.5">
+                    Cancel
+                  </button>
+                </div>
+                </>
+                )}
+
+                {builderMode === "manual" && (() => {
+                  const covered = coveredMuscleGroups(manualDays);
+                  const isFullBody = FULL_BODY_REQUIREMENT.every((g) => covered.has(g));
+                  return (
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-gray-700 text-xs font-bold">Days per week</span>
+                        <div className="flex items-center gap-3">
+                          <button onClick={() => toggleManualDayCount(-1)} className="w-7 h-7 rounded-full border border-gray-200 text-gray-900 font-bold text-sm">
+                            −
+                          </button>
+                          <span className="text-blue-600 font-black text-base w-4 text-center">{manualDayCount}</span>
+                          <button onClick={() => toggleManualDayCount(1)} className="w-7 h-7 rounded-full border border-gray-200 text-gray-900 font-bold text-sm">
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="border border-amber-700 rounded-lg p-2.5 mb-3">
+                        <p className="text-amber-700 text-xs font-bold mb-1.5">Full-Body Checklist</p>
+                        <div className="flex flex-wrap gap-1">
+                          {FULL_BODY_REQUIREMENT.map((g) => (
+                            <span key={g} className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${covered.has(g) ? "bg-emerald-50 border-emerald-300 text-emerald-700" : "border-gray-200 text-gray-400"}`}>
+                              {covered.has(g) ? "✓ " : ""}
+                              {g}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="flex gap-1 mb-3 bg-gray-50 p-1 rounded-lg overflow-x-auto">
+                        {manualDays.map((_, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setManualExpandedDay(i)}
+                            className={`px-3 py-1.5 rounded text-xs font-bold whitespace-nowrap ${manualExpandedDay === i ? "bg-blue-500 text-white" : "text-gray-500"}`}
+                          >
+                            Day {i + 1} ({manualDays[i].length})
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="border border-gray-100 rounded-lg p-2.5 mb-3 max-h-64 overflow-y-auto">
+                        {MUSCLE_CHART.flatMap((s) => s.groups).map((group) => {
+                          const groupSlots = ALL_SLOTS.filter((s) => s.muscleGroup === group);
+                          if (groupSlots.length === 0) return null;
+                          return (
+                            <div key={group} className="mb-2 last:mb-0">
+                              <p className="text-gray-500 text-xs font-bold mb-1">{group}</p>
+                              <div className="flex flex-wrap gap-1">
+                                {groupSlots.map((s) => {
+                                  const added = manualDays[manualExpandedDay].includes(s.slotId);
+                                  return (
+                                    <button
+                                      key={s.slotId}
+                                      onClick={() => toggleManualExercise(manualExpandedDay, s.slotId)}
+                                      className={`text-xs font-semibold px-2 py-1 rounded-full border ${added ? "bg-blue-500 border-blue-400 text-gray-900" : "bg-gray-50 border-gray-100 text-gray-700"}`}
+                                    >
+                                      {added ? "✓ " : "+ "}
+                                      {s.label}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={createManualProfile}
+                          disabled={!newProfileName.trim() || !isFullBody}
+                          className={`text-xs font-bold px-3 py-1.5 rounded-full ${newProfileName.trim() && isFullBody ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}
+                        >
+                          {isFullBody ? "Finish Building" : "Cover every group to finish"}
+                        </button>
+                        <button onClick={() => setShowNewProfileForm(false)} className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-1.5">
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+      </div>
+      </>
+      )}
+
+      {currentScreen === "status" && <HunterStatus history={history} cardioHistory={cardioHistory} customExercises={customExercises} />}
+
+      {currentScreen === "history" && <HistoryView history={history} />}
+
+      {currentScreen === "day" && (
+        <>
+          <h2 className="text-gray-900 font-bold text-sm mb-3">{day.label}</h2>
+          <DailyQuestBox
+            done={doneCount}
+            total={day.slots.length}
+            label={day.label}
+            goals={questGoals}
+            expanded={questIsExpanded}
+            onToggleExpand={toggleQuestExpand}
+          />
+
+          {todaysCardio ? (
+            <p className="text-emerald-700 text-xs font-bold mb-4 -mt-2">
+              ✓ Cardio logged — {todaysCardio.machine} · {todaysCardio.minutes} min
+            </p>
+          ) : (
+            <button onClick={() => setShowBonusQuest(true)} className="text-xs text-gray-500 underline underline-offset-2 mb-4 -mt-2">
+              + Optional: log cardio
+            </button>
+          )}
+
+          <div className="mb-4">
+            {!showAddExercise ? (
+              <button
+                onClick={() => {
+                  setNewExerciseDay(activeDay);
+                  setShowAddExercise(true);
+                }}
+                className="text-xs font-bold text-blue-600 border border-blue-200 rounded-full px-3 py-1.5"
+              >
+                + Add Exercise
+              </button>
+            ) : (
+              <div className="bg-white border border-gray-100 rounded-xl p-3">
+                <input
+                  type="text"
+                  value={newExerciseName}
+                  onChange={(e) => setNewExerciseName(e.target.value)}
+                  placeholder="Exercise name (e.g. Cable Crossover)"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 text-xs text-gray-900 mb-2"
+                />
+                {newExerciseName.trim() && (
+                  <p className="text-gray-500 text-xs mb-2">
+                    Auto-tagged as: <span className="text-blue-600 font-bold">{autoTagExercise(newExerciseName).muscleGroup}</span>
+                  </p>
+                )}
+                {newExerciseName.trim() &&
+                  (() => {
+                    const targetDaySlots = mergedDaySlots(
+                      programForProfile[newExerciseDay],
+                      customExercises[newExerciseDay],
+                      customSlotOptions,
+                      hiddenSlots[newExerciseDay]
+                    ).slots;
+                    const similar = findSimilarSlot(newExerciseName, targetDaySlots, autoTagExercise(newExerciseName).muscleGroup);
+                    if (!similar) return null;
+                    return (
+                      <div className="border border-blue-200 rounded-lg p-2 mb-2">
+                        <p className="text-blue-600 text-xs font-semibold mb-1.5">
+                          This looks similar to "{similar.label}" — group it there instead?
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          <button
+                            onClick={() => handleAddAsAlternativeOnly(similar, newExerciseName.trim())}
+                            className="text-xs font-bold bg-blue-500 text-white px-2.5 py-1 rounded-full"
+                          >
+                            Add as alternative
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleAddCustomOption(similar, newExerciseName.trim());
+                              setShowAddExercise(false);
+                            }}
+                            className="text-xs font-bold border border-blue-200 text-blue-600 px-2.5 py-1 rounded-full"
+                          >
+                            Make it the main one
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                <div className="flex items-center gap-2">
+                  <button onClick={handleAddCustomExercise} disabled={!newExerciseName.trim()} className={`text-xs font-bold px-3 py-1.5 rounded-full ${newExerciseName.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}>
+                    Add to {programForProfile[newExerciseDay].short}
+                  </button>
+                  <button onClick={() => { setShowAddExercise(false); setNewExerciseName(""); }} className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-1.5">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {hiddenSlots[activeDay] && hiddenSlots[activeDay].length > 0 && (
+            <div className="mb-4">
+              <p className="text-gray-500 text-xs font-bold mb-1.5">Hidden from this workout:</p>
+              <div className="flex flex-wrap gap-1.5">
+                {hiddenSlots[activeDay].map((slotId) => {
+                  const baseSlot = baseDay.slots.find((s) => s.slotId === slotId);
+                  if (!baseSlot) return null;
+                  return (
+                    <button
+                      key={slotId}
+                      onClick={() => handleRestoreSlot(activeDay, slotId)}
+                      className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-1.5"
+                    >
+                      + Restore {baseSlot.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {questIsExpanded && (
+            <>
+
+              {groupedSlots.map((group) => {
+                const sortedSlots = [...group.slots].sort((a, b) => {
+                  const aDone = loggedToday(history, getActiveOptionId(a)) ? 1 : 0;
+                  const bDone = loggedToday(history, getActiveOptionId(b)) ? 1 : 0;
+                  return aDone - bDone;
+                });
+                return (
+                <div key={group.muscleGroup}>
+                  <h3 className="text-gray-500 font-black uppercase tracking-widest text-xs mt-5 mb-2">{group.muscleGroup}</h3>
+                  {sortedSlots.map((slot) => {
+                    const optId = getActiveOptionId(slot);
+                    const activeOption = slot.options.find((o) => o.id === optId) || slot.options[0];
+                    return (
+                      <div key={slot.slotId}>
+                        <SlotCard
+                          slot={slot}
+                          activeOption={activeOption}
+                          history={history}
+                          dayKey={activeDay}
+                          swapOpen={swapOpenSlot === slot.slotId}
+                          onToggleSwap={() => setSwapOpenSlot(swapOpenSlot === slot.slotId ? null : slot.slotId)}
+                          onSwap={(newId) => handleSwap(slot, newId)}
+                          onAddCustomOption={(name) => handleAddCustomOption(slot, name)}
+                          draft={drafts[optId] || { weight: "", reps: [] }}
+                          onDraftChange={(field, value, index) => handleDraftChange(optId, field, value, index)}
+                          onLog={() => handleLog(slot)}
+                          isEditing={!!editingOptions[optId]}
+                          onEditLast={() => handleEditLast(slot, activeOption)}
+                          onCancelEdit={() => handleCancelEdit(activeOption)}
+                          onRemoveLast={() => handleRemoveLast(activeOption)}
+                          logStatus={logStatus[slot.slotId]}
+                          timerState={timers[slot.slotId]}
+                          onStartTimer={() => startTimer(slot)}
+                          onCancelTimer={() => cancelTimer(slot)}
+                          onExpandTimer={() => setFullScreenTimerSlot(slot.slotId)}
+                        />
+                        <button
+                          onClick={() =>
+                            slot.isCustom
+                              ? handleRemoveCustomExercise(activeDay, slot.options[0].id)
+                              : handleHideSlot(activeDay, slot.slotId)
+                          }
+                          className="text-xs text-red-600 underline underline-offset-2 -mt-2 mb-3 ml-1"
+                        >
+                          {slot.isCustom ? "Remove this custom exercise" : "Remove from this workout"}
+                        </button>
+                      </div>
+                    );
+                  })}
+            </div>
+            );
+          })}
+            </>
+          )}
+        </>
+      )}
+
+      {currentScreen === "backup" && (
+        <>
+          <BackupSection onExport={handleExport} onImport={handleImport} />
+          <button onClick={handleReset} className="mt-4 text-xs text-gray-500 underline underline-offset-2 focus:outline-none">
+            {resetArmed ? "Tap again to confirm reset" : "Reset all logged data"}
+          </button>
+        </>
+      )}
+      <BottomNav currentScreen={currentScreen} onNavigate={setCurrentScreen} onOpenMenu={() => setShowMenu(true)} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<WorkoutTracker />);
+</script>
+</body>
+</html>

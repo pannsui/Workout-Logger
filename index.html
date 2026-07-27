@@ -39,10 +39,10 @@ const PROGRAM = {
         restSeconds: 150,
         cues: ["You should feel this across your chest, not in your front shoulders or triceps."],
         options: [
-          { id: "flat_bench", name: "Flat Bench Press (Barbell)", seed: "30" },
-          { id: "db_bench", name: "Dumbbell Bench Press", seed: "50" },
-          { id: "machine_chest_press", name: "Machine Chest Press", seed: "100" },
-          { id: "smith_flat_bench", name: "Smith Machine Flat Press" },
+          { id: "flat_bench", equipment: "Barbell", name: "Flat Bench Press (Barbell)", seed: "30" },
+          { id: "db_bench", equipment: "Dumbbell", name: "Dumbbell Bench Press", seed: "50" },
+          { id: "machine_chest_press", equipment: "Machine", name: "Machine Chest Press", seed: "100" },
+          { id: "smith_flat_bench", equipment: "Machine", name: "Smith Machine Flat Press" },
         ],
       },
       {
@@ -56,9 +56,9 @@ const PROGRAM = {
         restSeconds: 150,
         cues: ["Feel the stretch and squeeze in your upper chest, not your shoulders."],
         options: [
-          { id: "incline_db", name: "Incline Dumbbell Press", seed: "52.5" },
-          { id: "incline_barbell", name: "Incline Barbell Press" },
-          { id: "incline_machine", name: "Incline Chest Press Machine" },
+          { id: "incline_db", equipment: "Dumbbell", name: "Incline Dumbbell Press", seed: "52.5" },
+          { id: "incline_barbell", equipment: "Barbell", name: "Incline Barbell Press" },
+          { id: "incline_machine", equipment: "Machine", name: "Incline Chest Press Machine" },
         ],
       },
       {
@@ -72,8 +72,8 @@ const PROGRAM = {
         restSeconds: 75,
         cues: ["Feel this in your rear shoulders and upper back - not your traps shrugging up."],
         options: [
-          { id: "cable_face_pull", name: "Cable Face Pull", seed: "40" },
-          { id: "band_face_pull", name: "Band Face Pull" },
+          { id: "cable_face_pull", equipment: "Cable", name: "Cable Face Pull", seed: "40" },
+          { id: "band_face_pull", equipment: "Band", name: "Band Face Pull" },
         ],
       },
       {
@@ -87,9 +87,9 @@ const PROGRAM = {
         restSeconds: 75,
         cues: ["Feel the back of your shoulders working, not your traps rising toward your ears."],
         options: [
-          { id: "cable_rear_delt", name: "Cross Cable Rear Delt Fly", seed: "7.5" },
-          { id: "pec_deck_rear", name: "Reverse Pec Deck" },
-          { id: "db_rear_delt", name: "Bent-Over DB Rear Delt Fly" },
+          { id: "cable_rear_delt", equipment: "Cable", name: "Cross Cable Rear Delt Fly", seed: "7.5" },
+          { id: "pec_deck_rear", equipment: "Machine", name: "Reverse Pec Deck" },
+          { id: "db_rear_delt", equipment: "Dumbbell", name: "Bent-Over DB Rear Delt Fly" },
         ],
       },
       {
@@ -103,9 +103,9 @@ const PROGRAM = {
         restSeconds: 75,
         cues: ["Feel tension on the side of your shoulder, not your traps."],
         options: [
-          { id: "cable_lateral", name: "Cable Lateral Raise", seed: "7.5" },
-          { id: "db_lateral", name: "Dumbbell Lateral Raise" },
-          { id: "machine_lateral", name: "Machine Lateral Raise" },
+          { id: "cable_lateral", equipment: "Cable", name: "Cable Lateral Raise", seed: "7.5" },
+          { id: "db_lateral", equipment: "Dumbbell", name: "Dumbbell Lateral Raise" },
+          { id: "machine_lateral", equipment: "Machine", name: "Machine Lateral Raise" },
         ],
       },
     ],
@@ -125,9 +125,9 @@ const PROGRAM = {
         restSeconds: 150,
         cues: ["Feel your back doing the pulling, not just your arms and grip."],
         options: [
-          { id: "chest_supported_row", name: "Chest-Supported / Low Row", seed: "100" },
-          { id: "single_arm_row", name: "Single-Arm DB Row", seed: "50" },
-          { id: "seated_row_machine", name: "Seated Row Machine" },
+          { id: "chest_supported_row", equipment: "Machine", name: "Chest-Supported / Low Row", seed: "100" },
+          { id: "single_arm_row", equipment: "Dumbbell", name: "Single-Arm DB Row", seed: "50" },
+          { id: "seated_row_machine", equipment: "Machine", name: "Seated Row Machine" },
         ],
       },
       {
@@ -141,8 +141,8 @@ const PROGRAM = {
         restSeconds: 150,
         cues: ["Feel your lats stretch at the top and squeeze down through your armpit at the bottom."],
         options: [
-          { id: "lat_pulldown", name: "Lat Pulldown", seed: "130" },
-          { id: "assisted_pullup", name: "Assisted Pull-Up Machine" },
+          { id: "lat_pulldown", equipment: "Cable", name: "Lat Pulldown", seed: "130" },
+          { id: "assisted_pullup", equipment: "Machine", name: "Assisted Pull-Up Machine" },
         ],
       },
       {
@@ -156,8 +156,8 @@ const PROGRAM = {
         restSeconds: 75,
         cues: ["Feel a long stretch through your lats at the top of the movement."],
         options: [
-          { id: "straight_arm_pulldown", name: "Straight Arm Pulldown" },
-          { id: "db_pullover", name: "Dumbbell Pullover" },
+          { id: "straight_arm_pulldown", equipment: "Cable", name: "Straight Arm Pulldown" },
+          { id: "db_pullover", equipment: "Dumbbell", name: "Dumbbell Pullover" },
           { id: "band_straight_arm", name: "Band Straight-Arm Pulldown" },
         ],
       },
@@ -172,8 +172,8 @@ const PROGRAM = {
         restSeconds: 75,
         cues: ["Feel this in your rear shoulders and upper back - not your traps shrugging up."],
         options: [
-          { id: "cable_face_pull", name: "Cable Face Pull", seed: "40" },
-          { id: "band_face_pull", name: "Band Face Pull" },
+          { id: "cable_face_pull", equipment: "Cable", name: "Cable Face Pull", seed: "40" },
+          { id: "band_face_pull", equipment: "Band", name: "Band Face Pull" },
         ],
       },
       {
@@ -188,9 +188,9 @@ const PROGRAM = {
         cues: ["Feel your lower abs curling your hips, not your hip flexors swinging your legs."],
         bodyweight: true,
         options: [
-          { id: "hanging_leg_raise", name: "Hanging Leg Raise" },
-          { id: "captains_chair", name: "Captain's Chair Leg Raise" },
-          { id: "lying_leg_raise", name: "Lying Leg Raise" },
+          { id: "hanging_leg_raise", equipment: "Bodyweight", name: "Hanging Leg Raise" },
+          { id: "captains_chair", equipment: "Bodyweight", name: "Captain's Chair Leg Raise" },
+          { id: "lying_leg_raise", equipment: "Bodyweight", name: "Lying Leg Raise" },
         ],
       },
       {
@@ -204,9 +204,9 @@ const PROGRAM = {
         restSeconds: 60,
         cues: ["Feel your abs contracting to curl your ribs down, not your arms pulling your head."],
         options: [
-          { id: "cable_crunch", name: "Cable Crunch" },
-          { id: "weighted_situp", name: "Weighted Sit-up" },
-          { id: "ab_crunch_machine", name: "Ab Crunch Machine" },
+          { id: "cable_crunch", equipment: "Cable", name: "Cable Crunch" },
+          { id: "weighted_situp", equipment: "Bodyweight", name: "Weighted Sit-up" },
+          { id: "ab_crunch_machine", equipment: "Machine", name: "Ab Crunch Machine" },
         ],
       },
     ],
@@ -226,9 +226,9 @@ const PROGRAM = {
         restSeconds: 150,
         cues: ["Feel this in your triceps at the bottom of the movement - if your chest takes over, your elbows are flaring."],
         options: [
-          { id: "weighted_dips", name: "Weighted Dips" },
-          { id: "close_grip_smith", name: "Close-Grip Smith Machine Press" },
-          { id: "machine_dip", name: "Machine Dip" },
+          { id: "weighted_dips", equipment: "Bodyweight", name: "Weighted Dips" },
+          { id: "close_grip_smith", equipment: "Machine", name: "Close-Grip Smith Machine Press" },
+          { id: "machine_dip", equipment: "Machine", name: "Machine Dip" },
         ],
       },
       {
@@ -242,9 +242,9 @@ const PROGRAM = {
         restSeconds: 75,
         cues: ["Feel a real stretch in your triceps at the bottom, not just a small partial rep."],
         options: [
-          { id: "cable_overhead_tricep", name: "Cable Overhead Tricep Extension" },
-          { id: "overhead_tricep_ext", name: "Overhead Tricep Extension (DB)" },
-          { id: "skull_crusher", name: "EZ-Bar Skull Crusher" },
+          { id: "cable_overhead_tricep", equipment: "Cable", name: "Cable Overhead Tricep Extension" },
+          { id: "overhead_tricep_ext", equipment: "Dumbbell", name: "Overhead Tricep Extension (DB)" },
+          { id: "skull_crusher", equipment: "Barbell", name: "EZ-Bar Skull Crusher" },
         ],
       },
       {
@@ -258,9 +258,9 @@ const PROGRAM = {
         restSeconds: 75,
         cues: ["Feel your triceps doing the work, not your shoulders rolling forward."],
         options: [
-          { id: "tricep_pushdown", name: "Tricep Pushdown", seed: "80" },
-          { id: "reverse_grip_pushdown", name: "Reverse-Grip Tricep Pushdown" },
-          { id: "bench_dips", name: "Bench Dips" },
+          { id: "tricep_pushdown", equipment: "Cable", name: "Tricep Pushdown", seed: "80" },
+          { id: "reverse_grip_pushdown", equipment: "Cable", name: "Reverse-Grip Tricep Pushdown" },
+          { id: "bench_dips", equipment: "Bodyweight", name: "Bench Dips" },
         ],
       },
       {
@@ -274,9 +274,9 @@ const PROGRAM = {
         restSeconds: 75,
         cues: ["Feel your biceps contracting through the whole rep, not your back swinging the weight."],
         options: [
-          { id: "db_curl", name: "Dumbbell Curl", seed: "15" },
-          { id: "curl_machine", name: "Bicep Curl Machine (Pin 5)", seed: "Pin 5" },
-          { id: "cable_curl", name: "Cable Bicep Curl" },
+          { id: "db_curl", equipment: "Dumbbell", name: "Dumbbell Curl", seed: "15" },
+          { id: "curl_machine", equipment: "Machine", name: "Bicep Curl Machine (Pin 5)", seed: "Pin 5" },
+          { id: "cable_curl", equipment: "Cable", name: "Cable Bicep Curl" },
         ],
       },
       {
@@ -290,9 +290,9 @@ const PROGRAM = {
         restSeconds: 75,
         cues: ["Feel your biceps and forearm together, without your wrists doing extra work."],
         options: [
-          { id: "hammer_curl", name: "Hammer Curl", seed: "15" },
-          { id: "cable_hammer_curl", name: "Cable Hammer Curl (rope)" },
-          { id: "cross_body_curl", name: "Cross-Body DB Curl" },
+          { id: "hammer_curl", equipment: "Dumbbell", name: "Hammer Curl", seed: "15" },
+          { id: "cable_hammer_curl", equipment: "Cable", name: "Cable Hammer Curl (rope)" },
+          { id: "cross_body_curl", equipment: "Dumbbell", name: "Cross-Body DB Curl" },
         ],
       },
       {
@@ -307,8 +307,8 @@ const PROGRAM = {
         cues: ["Feel this in your rear shoulders and upper back - not your traps shrugging up."],
         note: "Light rehab finisher, not a fatigue-sensitive priority lift",
         options: [
-          { id: "cable_face_pull", name: "Cable Face Pull", seed: "40" },
-          { id: "band_face_pull", name: "Band Face Pull" },
+          { id: "cable_face_pull", equipment: "Cable", name: "Cable Face Pull", seed: "40" },
+          { id: "band_face_pull", equipment: "Band", name: "Band Face Pull" },
         ],
       },
     ],
@@ -328,10 +328,10 @@ const PROGRAM = {
         restSeconds: 150,
         cues: ["Feel your quads working through the whole range, not just your lower back."],
         options: [
-          { id: "hack_squat", name: "Hack Squat", seed: "45+25" },
-          { id: "smith_squat", name: "Smith Machine Squat", seed: "45" },
-          { id: "leg_press", name: "Leg Press" },
-          { id: "angled_leg_press", name: "Angled Leg Press" },
+          { id: "hack_squat", equipment: "Machine", name: "Hack Squat", seed: "45+25" },
+          { id: "smith_squat", equipment: "Machine", name: "Smith Machine Squat", seed: "45" },
+          { id: "leg_press", equipment: "Machine", name: "Leg Press" },
+          { id: "angled_leg_press", equipment: "Machine", name: "Angled Leg Press" },
         ],
       },
       {
@@ -345,8 +345,8 @@ const PROGRAM = {
         restSeconds: 75,
         cues: ["Feel a strong quad squeeze at the top - this one should isolate your quads specifically."],
         options: [
-          { id: "leg_extension", name: "Leg Extension", seed: "130" },
-          { id: "sissy_squat", name: "Sissy Squat" },
+          { id: "leg_extension", equipment: "Machine", name: "Leg Extension", seed: "130" },
+          { id: "sissy_squat", equipment: "Bodyweight", name: "Sissy Squat" },
         ],
       },
       {
@@ -361,9 +361,9 @@ const PROGRAM = {
         cues: ["Feel a stretch through your hamstrings as you hinge, not your lower back rounding."],
         note: "Prioritize form over load",
         options: [
-          { id: "rdl", name: "Romanian Deadlift" },
-          { id: "db_rdl", name: "Dumbbell RDL" },
-          { id: "cable_pull_through", name: "Cable Pull-Through" },
+          { id: "rdl", equipment: "Barbell", name: "Romanian Deadlift" },
+          { id: "db_rdl", equipment: "Dumbbell", name: "Dumbbell RDL" },
+          { id: "cable_pull_through", equipment: "Cable", name: "Cable Pull-Through" },
         ],
       },
       {
@@ -377,9 +377,9 @@ const PROGRAM = {
         restSeconds: 75,
         cues: ["Feel your hamstrings contracting, not your calves cramping or your hips lifting."],
         options: [
-          { id: "seated_leg_curl", name: "Seated Leg Curl", seed: "100", note: "Settings: 3 ankle, 2 back, pin 5" },
-          { id: "lying_leg_curl", name: "Lying Leg Curl" },
-          { id: "standing_leg_curl", name: "Standing Single-Leg Curl" },
+          { id: "seated_leg_curl", equipment: "Machine", name: "Seated Leg Curl", seed: "100", note: "Settings: 3 ankle, 2 back, pin 5" },
+          { id: "lying_leg_curl", equipment: "Machine", name: "Lying Leg Curl" },
+          { id: "standing_leg_curl", equipment: "Machine", name: "Standing Single-Leg Curl" },
         ],
       },
       {
@@ -393,9 +393,9 @@ const PROGRAM = {
         restSeconds: 75,
         cues: ["Feel a deep stretch at the bottom and a hard squeeze at the top of your calf."],
         options: [
-          { id: "calf_raise", name: "Calf Raise", seed: "45+45" },
-          { id: "leg_press_calf", name: "Leg Press Calf Press" },
-          { id: "standing_calf_machine", name: "Standing Calf Raise Machine" },
+          { id: "calf_raise", equipment: "Machine", name: "Calf Raise", seed: "45+45" },
+          { id: "leg_press_calf", equipment: "Machine", name: "Leg Press Calf Press" },
+          { id: "standing_calf_machine", equipment: "Machine", name: "Standing Calf Raise Machine" },
         ],
       },
     ],
@@ -543,6 +543,7 @@ function freshProfileData(name, withSeedData, planStructure) {
     hiddenSlots: emptyDayMap(),
     cardioHistory: [],
     manualMaxes: [],
+    libraryExercises: [],
   };
 }
 
@@ -797,6 +798,23 @@ function SystemStyles() {
         100% { opacity: 1; transform: translateY(0); }
       }
       .fade-in { animation: fadeIn 0.25s ease-out; }
+      @keyframes springIn {
+        0% { opacity: 0; transform: scale(0.94) translateY(10px); }
+        60% { opacity: 1; transform: scale(1.015) translateY(-2px); }
+        100% { opacity: 1; transform: scale(1) translateY(0); }
+      }
+      .spring-in { animation: springIn 0.42s cubic-bezier(0.34, 1.56, 0.64, 1); }
+      .row-divider { position: relative; }
+      .row-divider::after {
+        content: '';
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        bottom: 0;
+        height: 1px;
+        background-color: #f3f4f6;
+      }
+      .dark .row-divider::after { background-color: #374151; }
       @keyframes loadingBar {
         0% { transform: translateX(-100%); }
         100% { transform: translateX(300%); }
@@ -806,6 +824,44 @@ function SystemStyles() {
         border-radius: 999px;
         animation: loadingBar 0.9s ease-in-out infinite;
       }
+      .dark .bg-white { background-color: #1f2937 !important; }
+      .dark .bg-gray-50 { background-color: #030712 !important; }
+      .dark .bg-gray-50\\/90 { background-color: rgba(3, 7, 18, 0.9) !important; }
+      .dark .bg-white\\/80 { background-color: rgba(31, 41, 55, 0.8) !important; }
+      .dark .bg-gray-100 { background-color: #1f2937 !important; }
+      .dark .bg-blue-400 { background-color: #60a5fa !important; }
+      .dark .bg-blue-500 { background-color: #3b82f6 !important; }
+      .dark .bg-red-500 { background-color: #ef4444 !important; }
+      .dark .bg-emerald-50 { background-color: #022c22 !important; }
+      .dark .bg-emerald-500 { background-color: #10b981 !important; }
+      .dark .bg-emerald-600 { background-color: #059669 !important; }
+      .dark .border-gray-100 { border-color: #374151 !important; }
+      .dark .border-gray-200 { border-color: #4b5563 !important; }
+      .dark .border-blue-100 { border-color: #1e3a8a !important; }
+      .dark .border-blue-200 { border-color: #1e40af !important; }
+      .dark .border-blue-300 { border-color: #1d4ed8 !important; }
+      .dark .border-blue-400 { border-color: #3b82f6 !important; }
+      .dark .border-blue-500 { border-color: #3b82f6 !important; }
+      .dark .border-amber-600 { border-color: #b45309 !important; }
+      .dark .border-amber-700 { border-color: #92400e !important; }
+      .dark .border-emerald-300 { border-color: #059669 !important; }
+      .dark .border-emerald-400 { border-color: #10b981 !important; }
+      .dark .border-emerald-500 { border-color: #10b981 !important; }
+      .dark .border-emerald-800 { border-color: #065f46 !important; }
+      .dark .border-emerald-900 { border-color: #064e3b !important; }
+      .dark .text-gray-300 { color: #4b5563 !important; }
+      .dark .text-gray-400 { color: #9ca3af !important; }
+      .dark .text-gray-500 { color: #9ca3af !important; }
+      .dark .text-gray-600 { color: #d1d5db !important; }
+      .dark .text-gray-700 { color: #d1d5db !important; }
+      .dark .text-gray-800 { color: #f3f4f6 !important; }
+      .dark .text-gray-900 { color: #f9fafb !important; }
+      .dark .text-blue-500 { color: #60a5fa !important; }
+      .dark .text-blue-600 { color: #60a5fa !important; }
+      .dark .text-red-600 { color: #f87171 !important; }
+      .dark .text-amber-700 { color: #f59e0b !important; }
+      .dark .text-emerald-700 { color: #34d399 !important; }
+      .dark .ring-blue-400 { --tw-ring-color: #60a5fa !important; }
     `}</style>
   );
 }
@@ -834,7 +890,7 @@ function TimerFullScreen({ slot, activeOption, timerState, onClose, onEndBreak }
   const done = timerState.remaining <= 0;
   const pct = slot.restSeconds > 0 ? Math.max(0, Math.min(100, ((slot.restSeconds - timerState.remaining) / slot.restSeconds) * 100)) : 0;
   return (
-    <div className="fixed inset-0 z-50 bg-gray-50 flex flex-col items-center justify-center px-6">
+    <div className="fixed inset-0 z-50 bg-gray-50/90 backdrop-blur-xl flex flex-col items-center justify-center px-6 spring-in">
       <div className={`relative bg-white border-2 w-full max-w-xs p-5 ${done ? "border-blue-400" : "border-gray-200"} rounded-3xl`}>
 
         <div className="flex items-center justify-between border-b border-gray-100 pb-2 mb-4">
@@ -976,70 +1032,51 @@ function getActiveOptionIdFor(slot, history) {
   return slot.options.find((o) => (history[o.id] || []).some((e) => !e.isBaseline && e.date === todayLabel()))?.id || slot.options[0].id;
 }
 
-function BottomNav({ currentScreen, onNavigate, onOpenMenu }) {
-  const tab = (label, screen, active) => (
-    <button onClick={() => onNavigate(screen)} className={`flex-1 py-2.5 text-xs font-bold ${active ? "text-blue-600" : "text-gray-400"}`}>
-      {label}
+function HamburgerMenu({ programForProfile, activeDay, currentScreen, onNavigate, onClose, onReturnToMenu, planName }) {
+  const Row = ({ label, onClick, active, isLast }) => (
+    <button onClick={onClick} className={`w-full flex items-center justify-between px-4 py-3 text-left ${!isLast ? "row-divider" : ""}`}>
+      <span className={`text-sm ${active ? "text-blue-500 font-semibold" : "text-gray-900"}`}>{label}</span>
+      {active ? <span className="text-blue-500 text-sm">✓</span> : <span className="text-gray-300 text-sm">›</span>}
     </button>
   );
-  return (
-    <div className="fixed bottom-0 inset-x-0 z-40 bg-white border-t border-gray-100 flex items-center">
-      {tab("Today", "day", currentScreen === "day")}
-      {tab("History", "history", currentScreen === "history")}
-      {tab("Status", "status", currentScreen === "status")}
-      <button onClick={onOpenMenu} className="flex-1 py-2.5 text-xs font-bold text-gray-400">
-        ☰ Menu
-      </button>
+  const Group = ({ label, children }) => (
+    <div className="mb-7">
+      {label && <p className="text-gray-400 text-xs font-semibold tracking-wide mb-2 px-1">{label}</p>}
+      <div className="bg-white rounded-2xl overflow-hidden">{children}</div>
     </div>
   );
-}
 
-function HamburgerMenu({ programForProfile, activeDay, currentScreen, onNavigate, onClose, onReturnToMenu, planName }) {
-  const item = (label, onClick, active) => (
-    <button
-      onClick={onClick}
-      className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-bold ${active ? "bg-blue-500 text-white" : "text-gray-900 border border-gray-100"}`}
-    >
-      {label}
-    </button>
-  );
   return (
-    <div className="fixed inset-0 z-50 bg-gray-50 overflow-y-auto px-4 pt-6 pb-12">
+    <div className="fixed inset-0 z-50 bg-gray-50/90 backdrop-blur-xl overflow-y-auto px-4 pt-6 pb-12 spring-in">
       <div className="flex items-center justify-between mb-1">
-        <p className="text-gray-900 font-black uppercase tracking-tight text-xl">Menu</p>
-        <button onClick={onClose} className="text-gray-500 text-sm font-semibold border border-gray-100 rounded-full px-3 py-1.5">
-          Close
+        <p className="text-gray-900 font-semibold text-2xl">Menu</p>
+        <button onClick={onClose} className="text-blue-500 text-base font-normal">
+          Done
         </button>
       </div>
-      <p className="text-gray-400 text-xs mb-4">{planName}</p>
+      <p className="text-gray-400 text-sm mb-6">{planName}</p>
 
-      <p className="text-gray-400 text-xs font-bold tracking-widest mb-1.5">TRAINING DAYS</p>
-      <div className="space-y-1.5 mb-4">
-        {Object.entries(programForProfile).map(([key, d]) => (
-          <div key={key}>{item(d.short + " — " + d.label, () => onNavigate("day", key), currentScreen === "day" && activeDay === key)}</div>
+      <Group label="Training Days">
+        {Object.entries(programForProfile).map(([key, d], i, arr) => (
+          <Row key={key} label={`${d.short} — ${d.label}`} onClick={() => onNavigate("day", key)} active={currentScreen === "day" && activeDay === key} isLast={i === arr.length - 1} />
         ))}
-      </div>
+      </Group>
 
-      <p className="text-gray-400 text-xs font-bold tracking-widest mb-1.5">PROGRESS</p>
-      <div className="space-y-1.5 mb-4">
-        <div>{item("Status", () => onNavigate("status"), currentScreen === "status")}</div>
-        <div>{item("Personal Records", () => onNavigate("trophy"), false)}</div>
-        <div>{item("My Maxes", () => onNavigate("maxes"), false)}</div>
-        <div>{item("History", () => onNavigate("history"), currentScreen === "history")}</div>
-      </div>
+      <Group label="Progress">
+        <Row label="Status" onClick={() => onNavigate("status")} active={currentScreen === "status"} />
+        <Row label="Records" onClick={() => onNavigate("trophy")} active={false} />
+        <Row label="History" onClick={() => onNavigate("history")} active={currentScreen === "history"} isLast />
+      </Group>
 
-      <p className="text-gray-400 text-xs font-bold tracking-widest mb-1.5">TOOLS</p>
-      <div className="space-y-1.5 mb-4">
-        <div>{item("Plate Calculator", () => onNavigate("plates"), false)}</div>
-        <div>{item("How This App Works", () => onNavigate("help"), false)}</div>
-      </div>
+      <Group label="Tools">
+        <Row label="Plate Calculator" onClick={() => onNavigate("plates")} active={false} />
+        <Row label="How This App Works" onClick={() => onNavigate("help")} active={false} isLast />
+      </Group>
 
-      <p className="text-gray-400 text-xs font-bold tracking-widest mb-1.5">PLAN</p>
-      <div className="space-y-1.5">
-        <div>{item("Switch or Create Plans", () => onNavigate("profile"), currentScreen === "profile")}</div>
-        <div>{item("Backup & Export", () => onNavigate("backup"), currentScreen === "backup")}</div>
-        <div>{item("Return to Main Menu", onReturnToMenu, false)}</div>
-      </div>
+      <Group label="Plan">
+        <Row label="Edit Workout Plan" onClick={() => onNavigate("profile")} active={currentScreen === "profile"} />
+        <Row label="Return to Home" onClick={onReturnToMenu} active={false} isLast />
+      </Group>
     </div>
   );
 }
@@ -1067,68 +1104,71 @@ function MainMenuScreen({
   onSave,
   savedFlash,
   onOpenRecords,
-  onOpenMaxes,
   onOpenHelp,
+  onOpenSettings,
 }) {
   return (
-    <div className="fixed inset-0 z-50 bg-gray-50 overflow-y-auto flex flex-col items-center justify-center px-6 py-10">
+    <div className="fixed inset-0 z-50 bg-gray-50 overflow-y-auto">
+      <div className="min-h-full flex flex-col items-center justify-center px-6 py-10">
 
-      <p className="text-gray-900 font-black tracking-tight text-4xl mb-10 text-center">Workout Log</p>
+      <p className="text-gray-900 font-bold text-3xl mb-8 text-center">Workout Log</p>
 
-      <p className="text-gray-400 text-xs font-bold tracking-widest mb-2 self-center">SELECT PLAN</p>
-      <div className="w-full max-w-xs space-y-2.5 mb-5">
-        {Object.entries(profiles).map(([id, p]) => {
+      <div className="w-full max-w-xs bg-white rounded-2xl overflow-hidden mb-5">
+        {Object.entries(profiles).map(([id, p], i, arr) => {
           const sessions = totalSessionsLogged(p.history || {});
           return (
             <button
               key={id}
               onClick={() => onSelectProfile(id)}
-              className="relative w-full bg-white border border-gray-100 p-3.5 text-left flex items-center justify-between rounded-2xl shadow-sm"
+              className={`w-full px-4 py-3 text-left flex items-center justify-between ${i < arr.length - 1 ? "row-divider" : ""}`}
             >
               <div>
-                <p className="text-gray-900 font-bold text-sm">{p.name}</p>
+                <p className="text-gray-900 text-sm">{p.name}</p>
                 <p className="text-gray-400 text-xs mt-0.5">{sessions} sessions logged</p>
               </div>
-              <span className="text-blue-500 text-xl">›</span>
+              <span className="text-gray-300 text-base">›</span>
             </button>
           );
         })}
-      </div>
-
-      {!showCreate ? (
-        <button onClick={onToggleCreate} className="w-full max-w-xs text-xs font-bold text-blue-600 border border-blue-100 rounded-lg py-2.5 mb-5">
-          + New Profile
-        </button>
-      ) : (
-        <div className="w-full max-w-xs border border-gray-100 rounded-lg p-3 mb-5">
-          <input
-            type="text"
-            value={newName}
-            onChange={(e) => onNewNameChange(e.target.value)}
-            placeholder="Profile name"
-            className="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 text-xs text-gray-900 mb-2"
-          />
-          <button onClick={onCreate} disabled={!newName.trim()} className={`text-xs font-bold px-3 py-1.5 rounded-full ${newName.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}>
-            Create & Select
+        {!showCreate ? (
+          <button onClick={onToggleCreate} className="w-full px-4 py-3 text-left text-blue-500 text-sm border-t border-gray-100">
+            + New Profile
           </button>
-        </div>
-      )}
+        ) : (
+          <div className="p-3 border-t border-gray-100">
+            <input
+              type="text"
+              value={newName}
+              onChange={(e) => onNewNameChange(e.target.value)}
+              placeholder="Profile name"
+              className="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 text-xs text-gray-900 mb-2"
+            />
+            <button onClick={onCreate} disabled={!newName.trim()} className={`text-xs font-bold px-3 py-1.5 rounded-full ${newName.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}>
+              Create & Select
+            </button>
+          </div>
+        )}
+      </div>
 
-      <div className="w-full max-w-xs grid grid-cols-3 gap-2 mb-5">
-        <button onClick={onOpenRecords} className="bg-white border border-gray-100 rounded-2xl py-3 text-center shadow-sm">
-          <p className="text-gray-900 text-xs font-bold">Records</p>
+      <div className="w-full max-w-xs bg-white rounded-2xl overflow-hidden mb-6">
+        <button onClick={onOpenRecords} className="w-full px-4 py-3 text-left flex items-center justify-between row-divider">
+          <span className="text-gray-900 text-sm">Records</span>
+          <span className="text-gray-300 text-base">›</span>
         </button>
-        <button onClick={onOpenMaxes} className="bg-white border border-gray-100 rounded-2xl py-3 text-center shadow-sm">
-          <p className="text-gray-900 text-xs font-bold">My Maxes</p>
+        <button onClick={onOpenHelp} className="w-full px-4 py-3 text-left flex items-center justify-between row-divider">
+          <span className="text-gray-900 text-sm">Help</span>
+          <span className="text-gray-300 text-base">›</span>
         </button>
-        <button onClick={onOpenHelp} className="bg-white border border-gray-100 rounded-2xl py-3 text-center shadow-sm">
-          <p className="text-gray-900 text-xs font-bold">Help</p>
+        <button onClick={onOpenSettings} className="w-full px-4 py-3 text-left flex items-center justify-between">
+          <span className="text-gray-900 text-sm">Settings</span>
+          <span className="text-gray-300 text-base">›</span>
         </button>
       </div>
 
-      <button onClick={onSave} className="text-xs font-bold text-gray-700 border border-gray-200 rounded-full px-4 py-2 flex items-center gap-1.5">
+      <button onClick={onSave} className="text-xs font-semibold text-gray-400">
         {savedFlash ? "Saved!" : "Save"}
       </button>
+      </div>
     </div>
   );
 }
@@ -1137,7 +1177,7 @@ function DailyRecapScreen({ day, history, streak, onClose }) {
   const summary = todaysSessionSummary(day, history);
   const prCount = summary.filter((s) => s.isPR).length;
   return (
-    <div className="fixed inset-0 z-50 bg-gray-50 flex flex-col items-center justify-center px-6">
+    <div className="fixed inset-0 z-50 bg-gray-50/90 backdrop-blur-xl flex flex-col items-center justify-center px-6 spring-in">
       <div className="relative bg-white border-2 border-blue-400 w-full max-w-xs p-5 rounded-3xl">
         <p className="text-gray-900 font-black tracking-widest text-sm text-center mb-1">DAILY RECAP</p>
         <p className="text-gray-500 text-xs text-center mb-4">{day ? day.label : "Today"}</p>
@@ -1167,117 +1207,48 @@ function DailyRecapScreen({ day, history, streak, onClose }) {
   );
 }
 
-function MyMaxesScreen({ maxes, onAdd, onDelete, onClose }) {
-  const [exercise, setExercise] = useState("");
-  const [weight, setWeight] = useState("");
-  const [repRange, setRepRange] = useState("");
-
-  return (
-    <div className="fixed inset-0 z-50 bg-gray-50 overflow-y-auto px-4 pt-6 pb-12">
-      <div className="flex items-center justify-between mb-1">
-        <p className="text-gray-900 font-bold text-xl">My Maxes</p>
-        <button onClick={onClose} className="text-gray-500 text-sm font-semibold border border-gray-200 rounded-full px-3 py-1.5">
-          Close
-        </button>
-      </div>
-      <p className="text-gray-500 text-xs mb-4">Record a max you already know - independent of your logged workouts.</p>
-
-      <div className="bg-white border border-gray-100 rounded-3xl p-4 mb-4 shadow-sm">
-        <input
-          type="text"
-          value={exercise}
-          onChange={(e) => setExercise(e.target.value)}
-          placeholder="Exercise, e.g. Deadlift"
-          className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 mb-2"
-        />
-        <div className="flex gap-2 mb-3">
-          <input
-            type="text"
-            inputMode="decimal"
-            value={weight}
-            onChange={(e) => setWeight(e.target.value)}
-            placeholder="Weight (lb)"
-            className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900"
-          />
-          <input
-            type="text"
-            value={repRange}
-            onChange={(e) => setRepRange(e.target.value)}
-            placeholder="Reps, e.g. 5"
-            className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900"
-          />
-        </div>
-        <button
-          onClick={() => {
-            onAdd(exercise, weight, repRange);
-            setExercise("");
-            setWeight("");
-            setRepRange("");
-          }}
-          disabled={!exercise.trim() || !weight.trim()}
-          className={`w-full text-sm font-bold px-4 py-2.5 rounded-lg ${exercise.trim() && weight.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}
-        >
-          Add Max
-        </button>
-      </div>
-
-      {maxes.length === 0 ? (
-        <p className="text-gray-400 text-sm text-center">No maxes recorded yet.</p>
-      ) : (
-        <div className="space-y-2">
-          {maxes.map((m) => (
-            <div key={m.id} className="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm flex items-center justify-between">
-              <div>
-                <p className="text-gray-900 font-bold text-sm">{m.exercise}</p>
-                <p className="text-gray-500 text-xs mt-0.5">
-                  {m.weight} lb × {m.repRange} · added {m.date}
-                </p>
-              </div>
-              <button onClick={() => onDelete(m.id)} className="text-red-600 text-xs font-semibold underline underline-offset-2 shrink-0 ml-2">
-                Remove
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 function HelpScreen({ onClose }) {
   return (
-    <div className="fixed inset-0 z-50 bg-gray-50 overflow-y-auto px-4 pt-6 pb-12">
+    <div className="fixed inset-0 z-50 bg-gray-50/90 backdrop-blur-xl overflow-y-auto px-4 pt-6 pb-12 spring-in">
       <div className="flex items-center justify-between mb-4">
-        <p className="text-gray-900 font-bold text-xl">How This App Works</p>
-        <button onClick={onClose} className="text-gray-500 text-sm font-semibold border border-gray-200 rounded-full px-3 py-1.5">
-          Close
+        <p className="text-gray-900 font-semibold text-2xl">How This App Works</p>
+        <button onClick={onClose} className="text-blue-500 text-base font-normal">
+          Done
         </button>
       </div>
 
-      <div className="bg-white border border-gray-100 rounded-3xl p-4 mb-3 shadow-sm">
-        <p className="text-gray-900 font-bold text-sm mb-2">Getting started</p>
-        <ul className="text-gray-600 text-sm space-y-2 list-disc pl-4">
-          <li>Pick a plan on the main menu (or create a new one).</li>
-          <li>Use the bottom bar to jump between Today, History, and Status.</li>
-          <li>On a workout day, type your reps for each set, weight pre-fills from last time - just confirm or adjust it, then tap Log.</li>
-          <li>Tap Swap on any exercise to use an alternative, or type in your own.</li>
-          <li>Everything saves automatically as you go - there's no separate save step needed, though a manual Save button is also in the menu if you want extra reassurance.</li>
-        </ul>
+      <div className="bg-white rounded-2xl overflow-hidden mb-3">
+        <p className="text-gray-500 text-xs px-4 pt-3 pb-1">GETTING STARTED</p>
+        {[
+          "Pick a plan on the Home screen (or create a new one).",
+          "Use the ☰ menu to jump between Today, History, and Status.",
+          "On a workout day, type your reps for each set, weight pre-fills from last time - just confirm or adjust it, then tap Log.",
+          "Tap Swap on any exercise to use an alternative, or type in your own.",
+          "Everything saves automatically as you go - there's no separate save step needed, though a manual Save button is also in the menu if you want extra reassurance.",
+        ].map((item, i, arr) => (
+          <p key={i} className={`text-gray-600 text-sm px-4 py-2.5 ${i < arr.length - 1 ? "row-divider" : ""}`}>
+            {item}
+          </p>
+        ))}
       </div>
 
-      <div className="bg-white border border-gray-100 rounded-3xl p-4 mb-3 shadow-sm">
-        <p className="text-gray-900 font-bold text-sm mb-2">Other things worth knowing</p>
-        <ul className="text-gray-600 text-sm space-y-2 list-disc pl-4">
-          <li><span className="font-semibold text-gray-800">Personal Records</span> shows your all-time best weight per exercise, plus an estimated 1-rep max.</li>
-          <li><span className="font-semibold text-gray-800">Plate Calculator</span> tells you exactly which plates to load for a target weight.</li>
-          <li><span className="font-semibold text-gray-800">Weekly Volume</span> on the Status screen tracks real sets per muscle group against a research-based weekly target - not just whether you showed up.</li>
-          <li><span className="font-semibold text-gray-800">RPE</span> (how hard a set felt, 6-10) is optional and hidden by default - tap "+ Add RPE" only if you want to track it.</li>
-          <li>Multiple profiles let you run separate plans (e.g. one for you, one for a partner, or different training blocks) without mixing data.</li>
-          <li><span className="font-semibold text-gray-800">Export</span> your data any time from the menu - keep a backup, or move it elsewhere.</li>
-        </ul>
+      <div className="bg-white rounded-2xl overflow-hidden mb-3">
+        <p className="text-gray-500 text-xs px-4 pt-3 pb-1">OTHER THINGS WORTH KNOWING</p>
+        {[
+          ["Personal Records", "shows your all-time best weight per exercise, plus an estimated 1-rep max."],
+          ["Plate Calculator", "tells you exactly which plates to load for a target weight."],
+          ["Weekly Volume", "on the Status screen tracks real sets per muscle group against a research-based weekly target - not just whether you showed up."],
+          ["RPE", 'is optional and hidden by default - tap "+ Add RPE" only if you want to track it.'],
+          ["Multiple profiles", "let you run separate plans without mixing data."],
+          ["Export", "your data any time from the menu - keep a backup, or move it elsewhere."],
+        ].map(([term, rest], i, arr) => (
+          <p key={i} className={`text-gray-600 text-sm px-4 py-2.5 ${i < arr.length - 1 ? "row-divider" : ""}`}>
+            <span className="font-semibold text-gray-900">{term}</span> {rest}
+          </p>
+        ))}
       </div>
 
-      <div className="bg-white border border-gray-100 rounded-3xl p-4 shadow-sm">
+      <div className="bg-white rounded-2xl p-4">
         <p className="text-gray-900 font-bold text-sm mb-2">Why this app exists</p>
         <p className="text-gray-600 text-sm mb-2">
           Built for people who have an hour or two at the gym and want to spend it lifting, not fighting an app. The core idea: logging your
@@ -1295,6 +1266,337 @@ function HelpScreen({ onClose }) {
   );
 }
 
+const EQUIPMENT_TYPES = ["Dumbbell", "Barbell", "Cable", "Machine", "Bodyweight", "Band", "Other"];
+
+function buildLibraryItems(libraryExercises) {
+  const items = [];
+  ALL_SLOTS.forEach((slot) => {
+    slot.options.forEach((opt) => {
+      items.push({ id: opt.id, name: opt.name, muscleGroup: slot.muscleGroup, movement: slot.label, equipment: opt.equipment || "Other", slot, opt, isCustom: false });
+    });
+  });
+  (libraryExercises || []).forEach((entry) => {
+    items.push({ id: entry.id, name: entry.name, muscleGroup: entry.muscleGroup, movement: entry.movement, equipment: entry.equipment, slot: null, opt: { id: entry.id, name: entry.name }, isCustom: true });
+  });
+  return items;
+}
+
+function ExerciseLibraryScreen({ history, libraryExercises, dayLabels, onSetMax, onAddToDay, onAddNewExercise, onEditExercise, onDeleteExercise, onClose }) {
+  const [viewMode, setViewMode] = useState("muscle");
+  const [expandedId, setExpandedId] = useState(null);
+  const [weight, setWeight] = useState("");
+  const [reps, setReps] = useState("");
+  const [targetDay, setTargetDay] = useState(Object.keys(dayLabels)[0]);
+  const [savedId, setSavedId] = useState(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [newName, setNewName] = useState("");
+  const [newMuscle, setNewMuscle] = useState("Chest");
+  const [newMovement, setNewMovement] = useState("");
+  const [newEquipment, setNewEquipment] = useState("Dumbbell");
+
+  const items = buildLibraryItems(libraryExercises);
+  const groupKey = viewMode === "muscle" ? "muscleGroup" : viewMode === "movement" ? "movement" : "equipment";
+  const groups = {};
+  items.forEach((item) => {
+    const key = item[groupKey];
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(item);
+  });
+  const muscleOptions = [...new Set(ALL_SLOTS.map((s) => s.muscleGroup))];
+
+  return (
+    <div className="fixed inset-0 z-50 bg-gray-50/90 backdrop-blur-xl overflow-y-auto px-4 pt-6 pb-12 spring-in">
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-gray-900 font-semibold text-2xl">Exercise Library</p>
+        <button onClick={onClose} className="text-blue-500 text-base font-normal">
+          Done
+        </button>
+      </div>
+      <p className="text-gray-500 text-xs mb-3">Set a max ahead of time, or add any exercise to a day.</p>
+
+      <div className="flex gap-1 mb-4 bg-white border border-gray-100 p-1 rounded-xl">
+        {[
+          ["muscle", "Muscle"],
+          ["movement", "Movement"],
+          ["equipment", "Equipment"],
+        ].map(([key, label]) => (
+          <button key={key} onClick={() => setViewMode(key)} className={`flex-1 py-2 rounded-lg text-xs font-bold ${viewMode === key ? "bg-blue-500 text-white" : "text-gray-500"}`}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {!showAddForm ? (
+        <button onClick={() => setShowAddForm(true)} className="w-full text-xs font-bold text-blue-600 border border-blue-100 rounded-lg py-2.5 mb-4 bg-white">
+          + Add New Exercise
+        </button>
+      ) : (
+        <div className="bg-white border border-gray-100 rounded-2xl p-3 mb-4 shadow-sm">
+          <input
+            type="text"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            placeholder="Exercise name"
+            className="w-full bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-2 text-sm text-gray-900 mb-2"
+          />
+          <input
+            type="text"
+            value={newMovement}
+            onChange={(e) => setNewMovement(e.target.value)}
+            placeholder="Movement, e.g. Preacher Curl"
+            className="w-full bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-2 text-sm text-gray-900 mb-2"
+          />
+          <div className="flex gap-2 mb-2">
+            <select value={newMuscle} onChange={(e) => setNewMuscle(e.target.value)} className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 text-xs text-gray-900">
+              {muscleOptions.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
+            <select value={newEquipment} onChange={(e) => setNewEquipment(e.target.value)} className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 text-xs text-gray-900">
+              {EQUIPMENT_TYPES.map((eq) => (
+                <option key={eq} value={eq}>
+                  {eq}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                if (!newName.trim() || !newMovement.trim()) return;
+                if (editingId) {
+                  onEditExercise(editingId, newName.trim(), newMuscle, newMovement.trim(), newEquipment);
+                } else {
+                  onAddNewExercise(newName.trim(), newMuscle, newMovement.trim(), newEquipment);
+                }
+                setNewName("");
+                setNewMovement("");
+                setEditingId(null);
+                setShowAddForm(false);
+              }}
+              disabled={!newName.trim() || !newMovement.trim()}
+              className={`flex-1 text-xs font-bold px-3 py-2 rounded-lg ${newName.trim() && newMovement.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}
+            >
+              {editingId ? "Save Changes" : "Save"}
+            </button>
+            <button
+              onClick={() => {
+                setShowAddForm(false);
+                setEditingId(null);
+              }}
+              className="text-xs font-semibold text-gray-500 border border-gray-200 rounded-lg px-3 py-2"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {Object.entries(groups).map(([groupName, groupItems]) => (
+        <div key={groupName} className="mb-4">
+          <p className="text-gray-400 text-xs font-bold tracking-widest mb-1.5">{groupName.toUpperCase()}</p>
+          <div className="space-y-1.5">
+            {groupItems.map((item) => {
+              const baseline = (history[item.id] || []).find((e) => e.isBaseline);
+              const expanded = expandedId === item.id;
+              return (
+                <div key={item.id} className="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm">
+                  <button
+                    onClick={() => {
+                      setExpandedId(expanded ? null : item.id);
+                      setWeight("");
+                      setReps("");
+                    }}
+                    className="w-full flex items-center justify-between text-left"
+                  >
+                    <div>
+                      <p className="text-gray-900 font-bold text-sm">{item.name}</p>
+                      <p className="text-gray-400 text-xs mt-0.5">
+                        {viewMode !== "movement" && `${item.movement} · `}
+                        {viewMode !== "equipment" && `${item.equipment}`}
+                        {baseline && isNumericWeight(baseline.weight) ? ` · Max: ${baseline.weight} lb` : ""}
+                      </p>
+                    </div>
+                    <span className="text-gray-400 text-xs">{expanded ? "▴" : "▾"}</span>
+                  </button>
+
+                  {expanded && (
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <div className="flex gap-2 mb-2">
+                        <input
+                          type="text"
+                          inputMode="decimal"
+                          value={weight}
+                          onChange={(e) => setWeight(e.target.value)}
+                          placeholder="Weight (lb)"
+                          className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-2 text-sm text-gray-900"
+                        />
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          value={reps}
+                          onChange={(e) => setReps(e.target.value)}
+                          placeholder="Reps"
+                          className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-2 text-sm text-gray-900"
+                        />
+                      </div>
+                      <button
+                        onClick={() => {
+                          onSetMax(item.id, weight);
+                          setSavedId(item.id);
+                          setTimeout(() => setSavedId(null), 1500);
+                        }}
+                        disabled={!weight.trim()}
+                        className={`w-full text-xs font-bold px-3 py-2 rounded-lg mb-2 ${weight.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}
+                      >
+                        {savedId === item.id ? "Saved!" : "Save Max"}
+                      </button>
+                      {item.slot && (
+                        <div className="flex gap-2">
+                          <select
+                            value={targetDay}
+                            onChange={(e) => setTargetDay(e.target.value)}
+                            className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 text-xs text-gray-900"
+                          >
+                            {Object.entries(dayLabels).map(([key, label]) => (
+                              <option key={key} value={key}>
+                                {label}
+                              </option>
+                            ))}
+                          </select>
+                          <button onClick={() => onAddToDay(item.slot, item.opt, targetDay)} className="text-xs font-bold px-3 py-2 rounded-lg bg-gray-900 text-white shrink-0">
+                            Add to Day
+                          </button>
+                        </div>
+                      )}
+                      {item.isCustom && (
+                        <>
+                          <div className="flex gap-2 mb-2">
+                            <select
+                              value={targetDay}
+                              onChange={(e) => setTargetDay(e.target.value)}
+                              className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 text-xs text-gray-900"
+                            >
+                              {Object.entries(dayLabels).map(([key, label]) => (
+                                <option key={key} value={key}>
+                                  {label}
+                                </option>
+                              ))}
+                            </select>
+                            <button
+                              onClick={() => onAddToDay({ muscleGroup: item.muscleGroup, muscles: [item.muscleGroup], cues: [] }, item.opt, targetDay)}
+                              className="text-xs font-bold px-3 py-2 rounded-lg bg-gray-900 text-white shrink-0"
+                            >
+                              Add to Day
+                            </button>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                setEditingId(item.id);
+                                setNewName(item.name);
+                                setNewMuscle(item.muscleGroup);
+                                setNewMovement(item.movement);
+                                setNewEquipment(item.equipment);
+                                setShowAddForm(true);
+                                setExpandedId(null);
+                              }}
+                              className="flex-1 text-xs font-semibold text-gray-500 border border-gray-200 rounded-lg py-2"
+                            >
+                              Edit
+                            </button>
+                            <button onClick={() => onDeleteExercise(item.id)} className="flex-1 text-xs font-semibold text-red-600 border border-gray-200 rounded-lg py-2">
+                              Delete
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SettingsScreen({ darkMode, onSetDarkMode, onExport, onImport, onReset, resetArmed, profileCount, totalSessions, onClose }) {
+  const [showAbout, setShowAbout] = useState(false);
+  const [showBackup, setShowBackup] = useState(false);
+
+  return (
+    <div className="fixed inset-0 z-50 bg-gray-50/90 backdrop-blur-xl overflow-y-auto px-4 pt-6 pb-12 spring-in">
+      <div className="flex items-center justify-between mb-6">
+        <p className="text-gray-900 font-semibold text-2xl">Settings</p>
+        <button onClick={onClose} className="text-blue-500 text-base font-normal">
+          Done
+        </button>
+      </div>
+
+      <div className="bg-white rounded-2xl overflow-hidden mb-7">
+        <div className="flex items-center justify-between px-4 py-3 row-divider">
+          <span className="text-gray-900 text-sm">Dark Mode</span>
+          <button
+            onClick={() => onSetDarkMode(!darkMode)}
+            aria-label="Toggle dark mode"
+            className={`w-14 h-8 rounded-full flex items-center px-1 transition-colors ${darkMode ? "bg-blue-500" : "bg-gray-200"}`}
+          >
+            <div className="w-6 h-6 rounded-full bg-white shadow transition-transform" style={{ transform: darkMode ? "translateX(24px)" : "translateX(0px)" }} />
+          </button>
+        </div>
+        <button onClick={() => setShowAbout(true)} className="w-full flex items-center justify-between px-4 py-3 text-left">
+          <span className="text-gray-900 text-sm">About</span>
+          <span className="text-gray-300 text-base">›</span>
+        </button>
+      </div>
+
+      <div className="bg-white rounded-2xl overflow-hidden mb-7">
+        <button onClick={() => setShowBackup(true)} className="w-full flex items-center justify-between px-4 py-3 text-left row-divider">
+          <span className="text-gray-900 text-sm">Backup & Restore</span>
+          <span className="text-gray-300 text-base">›</span>
+        </button>
+        <button onClick={onReset} className="w-full flex items-center justify-between px-4 py-3 text-left">
+          <span className="text-red-600 text-sm">{resetArmed ? "Tap again to confirm" : "Reset All Logged Data"}</span>
+        </button>
+      </div>
+
+      {showAbout && (
+        <div className="fixed inset-0 z-50 bg-gray-50/90 backdrop-blur-xl overflow-y-auto px-4 pt-6 pb-12 spring-in">
+          <div className="flex items-center justify-between mb-6">
+            <p className="text-gray-900 font-semibold text-2xl">About</p>
+            <button onClick={() => setShowAbout(false)} className="text-blue-500 text-base font-normal">
+              Done
+            </button>
+          </div>
+          <div className="bg-white rounded-2xl overflow-hidden mb-7">
+            <div className="flex items-center justify-between px-4 py-3 row-divider">
+              <span className="text-gray-900 text-sm">App</span>
+              <span className="text-gray-400 text-sm">Workout Log</span>
+            </div>
+            <div className="flex items-center justify-between px-4 py-3 row-divider">
+              <span className="text-gray-900 text-sm">Plans</span>
+              <span className="text-gray-400 text-sm">{profileCount}</span>
+            </div>
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-gray-900 text-sm">Sessions Logged</span>
+              <span className="text-gray-400 text-sm">{totalSessions}</span>
+            </div>
+          </div>
+          <p className="text-gray-400 text-xs px-1">Your data is stored on this device and in this chat. Nothing is shared beyond what you export.</p>
+        </div>
+      )}
+
+      {showBackup && <BackupSection onExport={onExport} onImport={onImport} onClose={() => setShowBackup(false)} />}
+    </div>
+  );
+}
+
 function PlateCalculatorScreen({ onClose }) {
   const [target, setTarget] = useState("");
   const [barWeight, setBarWeight] = useState("45");
@@ -1304,11 +1606,11 @@ function PlateCalculatorScreen({ onClose }) {
   const plateColor = { 45: "bg-red-500", 35: "bg-blue-500", 25: "bg-emerald-500", 10: "bg-slate-300", 5: "bg-blue-400", 2.5: "bg-slate-500" };
 
   return (
-    <div className="fixed inset-0 z-50 bg-gray-50 overflow-y-auto px-4 pt-6 pb-12">
+    <div className="fixed inset-0 z-50 bg-gray-50/90 backdrop-blur-xl overflow-y-auto px-4 pt-6 pb-12 spring-in">
       <div className="flex items-center justify-between mb-4">
-        <p className="text-gray-900 font-black uppercase tracking-tight text-xl">Plate Calculator</p>
-        <button onClick={onClose} className="text-gray-500 text-sm font-semibold border border-gray-100 rounded-full px-3 py-1.5">
-          Close
+        <p className="text-gray-900 font-semibold text-2xl">Plate Calculator</p>
+        <button onClick={onClose} className="text-blue-500 text-base font-normal">
+          Done
         </button>
       </div>
 
@@ -1358,39 +1660,115 @@ function PlateCalculatorScreen({ onClose }) {
   );
 }
 
-function TrophyRoom({ history, onClose }) {
+function TrophyRoom({ history, maxes, onAdd, onDelete, onClose }) {
+  const [tab, setTab] = useState("logged");
   const records = personalRecords(history);
+  const [exercise, setExercise] = useState("");
+  const [weight, setWeight] = useState("");
+  const [repRange, setRepRange] = useState("");
+
   return (
-    <div className="fixed inset-0 z-50 bg-gray-50 overflow-y-auto px-4 pt-6 pb-12">
+    <div className="fixed inset-0 z-50 bg-gray-50/90 backdrop-blur-xl overflow-y-auto px-4 pt-6 pb-12 spring-in">
       <div className="flex items-center justify-between mb-4">
-        <p className="text-gray-900 font-black uppercase tracking-tight text-xl">Personal Records</p>
-        <button onClick={onClose} className="text-gray-500 text-sm font-semibold border border-gray-100 rounded-full px-3 py-1.5">
-          Close
+        <p className="text-gray-900 font-semibold text-2xl">Records</p>
+        <button onClick={onClose} className="text-blue-500 text-base font-normal">
+          Done
         </button>
       </div>
-      <p className="text-gray-500 text-xs mb-4">Your all-time best logged weight per exercise.</p>
-      {records.length === 0 ? (
-        <div className="bg-white border border-gray-100 rounded-xl p-4">
-          <p className="text-gray-500 text-sm italic">No personal records yet — log a real session to start setting them.</p>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {records.map((r, i) => (
-            <div key={r.optionId} className="relative bg-white border border-amber-600 p-3 rounded-2xl">
-              <div className="flex items-center justify-between">
-                <p className="text-gray-900 font-bold text-sm">
-                  
-                  {r.name}
+
+      <div className="flex gap-1 mb-4 bg-white border border-gray-100 p-1 rounded-xl">
+        <button onClick={() => setTab("logged")} className={`flex-1 py-2 rounded-lg text-xs font-bold ${tab === "logged" ? "bg-blue-500 text-white" : "text-gray-500"}`}>
+          Logged
+        </button>
+        <button onClick={() => setTab("manual")} className={`flex-1 py-2 rounded-lg text-xs font-bold ${tab === "manual" ? "bg-blue-500 text-white" : "text-gray-500"}`}>
+          Manual
+        </button>
+      </div>
+
+      {tab === "logged" ? (
+        records.length === 0 ? (
+          <div className="bg-white rounded-2xl px-4 py-3">
+            <p className="text-gray-400 text-sm">Log a real session to start setting records.</p>
+          </div>
+        ) : (
+          <div className="bg-white rounded-2xl overflow-hidden">
+            {records.map((r, i) => (
+              <div key={r.optionId} className={`px-4 py-3 ${i < records.length - 1 ? "row-divider" : ""}`}>
+                <div className="flex items-center justify-between">
+                  <p className="text-gray-900 text-sm">{r.name}</p>
+                  <p className="text-amber-700 font-bold text-base">{r.weight} lb</p>
+                </div>
+                <p className="text-gray-400 text-xs mt-0.5">
+                  {r.reps.join(", ")} reps · {r.date}
+                  {r.estOneRepMax ? ` · Est. 1RM: ${r.estOneRepMax} lb` : ""}
                 </p>
-                <p className="text-amber-700 font-black text-base">{r.weight} lb</p>
               </div>
-              <p className="text-gray-500 text-xs mt-0.5">
-                {r.reps.join(", ")} reps · {r.date}
-              </p>
-              {r.estOneRepMax && <p className="text-gray-400 text-xs mt-0.5">Est. 1RM: {r.estOneRepMax} lb</p>}
+            ))}
+          </div>
+        )
+      ) : (
+        <>
+          <div className="bg-white rounded-2xl overflow-hidden mb-4">
+            <input
+              type="text"
+              value={exercise}
+              onChange={(e) => setExercise(e.target.value)}
+              placeholder="Exercise, e.g. Deadlift"
+              className="w-full px-4 py-3 text-gray-900 row-divider focus:outline-none"
+            />
+            <div className="flex row-divider">
+              <input
+                type="text"
+                inputMode="decimal"
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
+                placeholder="Weight (lb)"
+                className="flex-1 px-4 py-3 text-gray-900 border-r border-gray-100 focus:outline-none"
+              />
+              <input
+                type="text"
+                value={repRange}
+                onChange={(e) => setRepRange(e.target.value)}
+                placeholder="Reps"
+                className="flex-1 px-4 py-3 text-gray-900 focus:outline-none"
+              />
             </div>
-          ))}
-        </div>
+            <button
+              onClick={() => {
+                onAdd(exercise, weight, repRange);
+                setExercise("");
+                setWeight("");
+                setRepRange("");
+              }}
+              disabled={!exercise.trim() || !weight.trim()}
+              className={`w-full text-sm font-bold px-4 py-3 ${exercise.trim() && weight.trim() ? "text-blue-600" : "text-gray-300"}`}
+            >
+              Add
+            </button>
+          </div>
+
+          {maxes.length === 0 ? (
+            <div className="bg-white rounded-2xl px-4 py-3">
+              <p className="text-gray-400 text-sm">Nothing recorded yet.</p>
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl overflow-hidden">
+              {maxes.map((m, i) => (
+                <div key={m.id} className={`px-4 py-3 flex items-center justify-between ${i < maxes.length - 1 ? "row-divider" : ""}`}>
+                  <div>
+                    <p className="text-gray-900 text-sm">{m.exercise}</p>
+                    <p className="text-gray-400 text-xs mt-0.5">
+                      {m.weight} lb × {m.repRange} · {m.date}
+                    </p>
+                  </div>
+                  <button onClick={() => onDelete(m.id)} className="text-red-600 text-xs font-semibold shrink-0 ml-2">
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
@@ -1468,14 +1846,14 @@ function ProgressBar({ done, total }) {
   );
 }
 
-function DailyQuestBox({ done, total, label, goals, expanded, onToggleExpand }) {
+function DailyQuestBox({ done, total, label, goals, expanded, onToggleExpand, todaysCardio, onOpenCardio }) {
   const complete = done >= total && total > 0;
   return (
     <div
       key={complete ? "complete" : "incomplete"}
-      className="relative fade-in rounded-3xl p-4 mb-4 border border-gray-100 bg-white shadow-sm"
+      className="relative spring-in rounded-3xl overflow-hidden mb-4 bg-white shadow-sm"
     >
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between px-4 py-3 row-divider">
         <p className="text-gray-900 font-bold text-base">{label}</p>
         <span className="text-xs font-semibold text-gray-400">
           {done}/{total} done
@@ -1483,41 +1861,41 @@ function DailyQuestBox({ done, total, label, goals, expanded, onToggleExpand }) 
       </div>
 
       {complete && !expanded ? (
-        <button onClick={onToggleExpand} className="w-full text-left">
-          <p className="text-emerald-700 text-sm font-bold text-center border-t border-gray-100 pt-3">All done for today ✓</p>
+        <button onClick={onToggleExpand} className="w-full text-left px-4 py-3 row-divider">
+          <p className="text-emerald-700 text-sm font-bold text-center">All done for today ✓</p>
           <p className="text-gray-400 text-xs text-center mt-1 underline underline-offset-2">Show exercises</p>
         </button>
       ) : (
         <>
-          <p className="text-gray-500 font-semibold text-xs tracking-wide mb-2">TODAY'S EXERCISES</p>
-          <div className="space-y-1.5 mb-3">
-            {goals.map((g) => (
-              <div key={g.label} className="flex items-center justify-between">
-                <span className={`text-xs ${g.done ? "text-gray-500" : "text-gray-900"}`}>{g.label}</span>
-                {g.done ? (
-                  <span className="text-emerald-700 text-xs font-bold">[✓]</span>
-                ) : (
-                  <span className="text-gray-300 text-xs font-bold">[ ]</span>
-                )}
-              </div>
-            ))}
-          </div>
-          <div className="border-t border-gray-100 pt-2">
-            {complete ? (
-              <>
-                <p className="text-emerald-700 text-xs font-bold text-center mb-1">All exercises logged for today ✓</p>
-                <button onClick={onToggleExpand} className="w-full text-center text-gray-500 text-xs underline underline-offset-2">
-                  Hide goals
-                </button>
-              </>
-            ) : (
-              <p className="text-gray-500 text-xs">
-                <span className="text-red-600 font-bold">Note:</span> skipping a day just means starting fresh tomorrow — no penalty, just momentum.
-              </p>
-            )}
-          </div>
+          {goals.map((g) => (
+            <div key={g.label} className="flex items-center gap-2.5 px-4 py-2.5 row-divider">
+              <span className={`w-4 h-4 rounded-full border shrink-0 flex items-center justify-center ${g.done ? "bg-emerald-500 border-emerald-500" : "border-gray-300"}`}>
+                {g.done && <span className="text-white text-xs leading-none">✓</span>}
+              </span>
+              <span className={`text-sm ${g.done ? "text-gray-400" : "text-gray-900"}`}>{g.label}</span>
+            </div>
+          ))}
+          {complete && (
+            <button onClick={onToggleExpand} className="w-full text-center px-4 py-2.5 row-divider">
+              <p className="text-emerald-700 text-xs font-bold mb-1">All exercises logged for today ✓</p>
+              <p className="text-gray-500 text-xs underline underline-offset-2">Hide goals</p>
+            </button>
+          )}
         </>
       )}
+
+      <div className="flex items-center justify-between px-4 py-3">
+        <span className="text-gray-900 text-sm">Cardio</span>
+        {todaysCardio ? (
+          <span className="text-xs font-bold text-emerald-700">
+            ✓ {todaysCardio.machine} · {todaysCardio.minutes} min
+          </span>
+        ) : (
+          <button onClick={onOpenCardio} className="text-xs font-bold text-blue-600">
+            + Log cardio
+          </button>
+        )}
+      </div>
     </div>
   );
 }
@@ -1525,7 +1903,7 @@ function DailyQuestBox({ done, total, label, goals, expanded, onToggleExpand }) 
 function BonusQuestScreen({ cardioHistory, machine, onMachineChange, minutes, onMinutesChange, onLog, onClose }) {
   const todayEntry = cardioLoggedToday(cardioHistory);
   return (
-    <div className="fixed inset-0 z-50 bg-gray-50 flex flex-col items-center justify-center px-6">
+    <div className="fixed inset-0 z-50 bg-gray-50/90 backdrop-blur-xl flex flex-col items-center justify-center px-6 spring-in">
       <div className="relative bg-white border-2 border-emerald-500 w-full max-w-xs p-5 rounded-3xl">
         <div className="flex items-center justify-between border-b border-emerald-900 pb-2 mb-4">
           <p className="text-emerald-700 font-black tracking-widest text-sm">OPTIONAL: CARDIO</p>
@@ -1601,6 +1979,7 @@ function SlotCard({
   onStartTimer,
   onCancelTimer,
   onExpandTimer,
+  editMode,
 }) {
   const last = getLast(history, activeOption.id);
   const capped = isToppedOut(last, slot);
@@ -1645,7 +2024,7 @@ function SlotCard({
     return (
       <button
         onClick={() => setCardExpanded(true)}
-        className="relative w-full text-left bg-white border border-emerald-800 p-3 mb-3 flex items-center justify-between gap-2 rounded-2xl"
+        className={`relative w-full text-left bg-white p-3 mb-3 flex items-center justify-between gap-2 rounded-2xl shadow-sm ${editMode ? "pr-11" : ""}`}
       >
         <div className="min-w-0">
           <p className="text-gray-900 font-bold text-sm truncate">{slot.label}</p>
@@ -1659,40 +2038,47 @@ function SlotCard({
   }
 
   return (
-    <div
-      className={`relative bg-white border p-4 mb-3 shadow-lg ${isEditing ? "border-blue-500 shadow-sm" : "border-gray-100 shadow-sm"} rounded-2xl`}
-    >
+    <div className={`relative bg-white p-4 mb-3 rounded-2xl shadow-sm ${isEditing ? "ring-2 ring-blue-400" : ""} ${editMode ? "pr-11" : ""}`}>
       <div className="flex items-center justify-between mb-1">
-        <h3 className="text-gray-400 font-semibold text-xs uppercase tracking-wide">{slot.label}</h3>
+        <h3 className="text-gray-400 font-medium text-xs uppercase tracking-wide">{slot.label}</h3>
         {bossDefeated ? (
           <button onClick={() => setCardExpanded(false)} className="text-gray-400 text-xs font-semibold underline underline-offset-2">
             Collapse
           </button>
         ) : (
-          <span className="text-gray-400 text-xs font-mono">{slot.target}</span>
+          <span className="text-gray-400 text-xs">{slot.target}</span>
         )}
       </div>
 
       <div className="flex items-center justify-between gap-2">
         <span className="text-gray-900 font-bold text-lg leading-snug">{activeOption.name}</span>
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           {timerActive && <RestTimer timerState={timerState} onExpand={onExpandTimer} />}
           <button
             onClick={timerActive ? onCancelTimer : onStartTimer}
             className={
               timerDone
-                ? "text-xs font-bold text-white bg-blue-400 border border-blue-300 rounded-full px-2.5 py-1 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                : "text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-2.5 py-1 active:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                ? "text-sm font-semibold text-white bg-blue-400 rounded-full px-2.5 py-1 active:scale-95 focus:outline-none"
+                : "text-xs font-semibold text-gray-600 bg-gray-100 rounded-full px-2.5 py-1.5 active:bg-gray-200 focus:outline-none"
             }
           >
-            {timerDone ? "End Break" : timerActive ? "Cancel" : `Rest ${formatMMSS(slot.restSeconds)}`}
+            {timerDone ? "End Break" : timerActive ? "Cancel" : formatMMSS(slot.restSeconds)}
           </button>
           <button
             onClick={onToggleSwap}
-            className="flex items-center gap-1 text-xs font-bold uppercase tracking-wide text-gray-500 active:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded px-1.5 py-1"
+            aria-label={swapOpen ? "Cancel swap" : "Swap exercise"}
+            className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 focus:outline-none ${swapOpen ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-600 active:bg-gray-200"}`}
           >
-            <span>&#8644;</span>
-            {swapOpen ? "Cancel" : "Swap"}
+            {swapOpen ? (
+              <span className="text-xs leading-none">✕</span>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 3l4 4-4 4" />
+                <path d="M21 7H9c-2 0-4 1-4 4" />
+                <path d="M7 21l-4-4 4-4" />
+                <path d="M3 17h12c2 0 4-1 4-4" />
+              </svg>
+            )}
           </button>
         </div>
       </div>
@@ -1715,7 +2101,7 @@ function SlotCard({
             ))}
           </div>
           {!showCustomSwap ? (
-            <button onClick={() => setShowCustomSwap(true)} className="mt-2 text-xs font-semibold text-blue-600 underline underline-offset-2">
+            <button onClick={() => setShowCustomSwap(true)} className="mt-2 text-sm text-blue-500">
               + Type your own exercise
             </button>
           ) : (
@@ -1748,27 +2134,27 @@ function SlotCard({
         {!last && <span className="text-gray-500 italic">No history yet — log today to start tracking</span>}
         {last && last.isBaseline && (
           <span className="text-gray-500">
-            Reported baseline: <span className="font-mono text-gray-900 tracking-wide">{last.weight} lb</span>
+            Reported baseline: <span className="text-gray-900">{last.weight} lb</span>
           </span>
         )}
         {last && !last.isBaseline && (
           <span className="text-gray-500">
             Last time ({last.date}):{" "}
-            <span className="font-mono text-gray-900 tracking-wide">
+            <span className="text-gray-900">
               {slot.bodyweight ? "BW" : `${last.weight} lb`} × {last.reps.join(", ")}
             </span>{" "}
-            <button onClick={onEditLast} className="text-gray-500 underline underline-offset-2 focus:outline-none">
+            <button onClick={onEditLast} className="text-blue-500 focus:outline-none">
               Edit
             </button>{" "}
-            <button onClick={onRemoveLast} className="text-red-600 underline underline-offset-2 focus:outline-none">
+            <button onClick={onRemoveLast} className="text-red-500 focus:outline-none">
               Remove
             </button>
           </span>
         )}
         {capped && !isEditing && (
-          <div className="fade-in flex items-center gap-1 mt-1 text-blue-600 font-bold border border-blue-500 rounded-lg px-2 py-1.5">
+          <div className="fade-in flex items-center gap-1 mt-1 text-blue-600 font-semibold">
             <span>&#8593;</span>
-            <span>STAT THRESHOLD REACHED — increase load next session</span>
+            <span>You've hit the top of this rep range — try adding weight next time</span>
           </div>
         )}
         {isEditing && (
@@ -1789,7 +2175,7 @@ function SlotCard({
             placeholder="lb"
             value={draft.weight || ""}
             onChange={(e) => onDraftChange("weight", e.target.value)}
-            className="w-14 bg-gray-50 border border-gray-100 rounded-lg px-1 py-2 text-center text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-14 bg-gray-50 rounded-lg px-1 py-2 text-center text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         )}
         {Array.from({ length: slot.sets }).map((_, i) => (
@@ -1800,14 +2186,14 @@ function SlotCard({
             placeholder={`S${i + 1}`}
             value={repsArr[i] || ""}
             onChange={(e) => onDraftChange("reps", e.target.value, i)}
-            className="w-11 bg-gray-50 border border-gray-100 rounded-lg px-1 py-2 text-center text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-11 bg-gray-50 rounded-lg px-1 py-2 text-center text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         ))}
         <button
           onClick={onLog}
           disabled={!canLog}
-          className={`ml-auto flex items-center gap-1 font-bold text-xs uppercase tracking-wide px-4 py-2.5 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-            canLog ? "bg-blue-500 text-white active:scale-95" : "bg-gray-100 text-gray-500"
+          className={`ml-auto flex items-center gap-1 font-semibold text-sm px-4 py-2.5 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+            canLog ? "bg-blue-500 text-white active:scale-95" : "bg-gray-100 text-gray-400"
           }`}
         >
           {logStatus ? (
@@ -1823,8 +2209,8 @@ function SlotCard({
       </div>
 
       {!showRpeSelector && !draft.rpe ? (
-        <button onClick={() => setShowRpeSelector(true)} className="text-xs text-gray-400 underline underline-offset-2 mt-2">
-          + Add RPE (optional)
+        <button onClick={() => setShowRpeSelector(true)} className="text-sm text-blue-500 mt-2">
+          + Add RPE
         </button>
       ) : (
         <div className="flex items-center gap-1 mt-2">
@@ -1833,7 +2219,7 @@ function SlotCard({
             <button
               key={n}
               onClick={() => onDraftChange("rpe", draft.rpe === n ? null : n)}
-              className={`w-7 h-7 rounded-full text-xs font-bold border ${draft.rpe === n ? "bg-blue-500 border-blue-400 text-gray-900" : "bg-gray-50 border-gray-100 text-gray-700"}`}
+              className={`w-7 h-7 rounded-full text-xs font-semibold ${draft.rpe === n ? "bg-blue-500 text-white" : "bg-gray-50 text-gray-500"}`}
             >
               {n}
             </button>
@@ -1906,7 +2292,7 @@ function HistoryView({ history }) {
   );
 }
 
-function BackupSection({ onExport, onImport }) {
+function BackupSection({ onExport, onImport, onClose }) {
   const [showImport, setShowImport] = useState(false);
   const [text, setText] = useState("");
   const [status, setStatus] = useState("");
@@ -1925,19 +2311,26 @@ function BackupSection({ onExport, onImport }) {
   }
 
   return (
-    <div className="mt-6 bg-white rounded-2xl border border-gray-100 p-4">
-      <h3 className="text-gray-900 font-black uppercase tracking-wide text-xs mb-1">Backup</h3>
-      <p className="text-gray-500 text-xs mb-3">Download a copy of your logged data, independent of Claude's storage.</p>
-      <div className="flex items-center gap-2 flex-wrap">
-        <button onClick={onExport} className="text-xs font-bold uppercase tracking-wide px-4 py-2.5 rounded-lg bg-blue-500 text-white active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400">
-          Download Backup
-        </button>
-        <button onClick={() => setShowImport((v) => !v)} className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-2 active:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400">
-          {showImport ? "Cancel" : "Restore from Backup"}
+    <div className="fixed inset-0 z-50 bg-gray-50/90 backdrop-blur-xl overflow-y-auto px-4 pt-6 pb-12 spring-in">
+      <div className="flex items-center justify-between mb-6">
+        <p className="text-gray-900 font-semibold text-2xl">Backup & Restore</p>
+        <button onClick={onClose} className="text-blue-500 text-base font-normal">
+          Done
         </button>
       </div>
+
+      <div className="bg-white rounded-2xl overflow-hidden mb-2">
+        <button onClick={onExport} className="w-full flex items-center justify-between px-4 py-3 text-left row-divider">
+          <span className="text-blue-600 text-sm">Download Backup</span>
+        </button>
+        <button onClick={() => setShowImport((v) => !v)} className="w-full flex items-center justify-between px-4 py-3 text-left">
+          <span className="text-blue-600 text-sm">{showImport ? "Cancel Restore" : "Restore from Backup"}</span>
+        </button>
+      </div>
+      <p className="text-gray-400 text-xs px-1 mb-4">Independent of Claude's storage — keep a copy somewhere safe.</p>
+
       {showImport && (
-        <div className="mt-3">
+        <div className="bg-white rounded-2xl p-4 mb-4">
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -1949,7 +2342,7 @@ function BackupSection({ onExport, onImport }) {
           </button>
         </div>
       )}
-      {status && <p className="text-xs text-blue-600 font-semibold mt-2">{status}</p>}
+      {status && <p className="text-xs text-blue-600 font-semibold px-1">{status}</p>}
     </div>
   );
 }
@@ -1969,20 +2362,36 @@ function WorkoutTracker() {
   const [fullScreenTimerSlot, setFullScreenTimerSlot] = useState(null);
   const [showTrophyRoom, setShowTrophyRoom] = useState(false);
   const [showPlateCalc, setShowPlateCalc] = useState(false);
+  const [showLibrary, setShowLibrary] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  const [showMyMaxes, setShowMyMaxes] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [showSavedToast, setShowSavedToast] = useState(false);
   const [currentScreen, setCurrentScreen] = useState("day");
   const [showMenu, setShowMenu] = useState(false);
   const [appPhase, setAppPhase] = useState("loading");
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", darkMode);
+  }, [darkMode]);
+
+  function handleSetDarkMode(value) {
+    setDarkMode(value);
+    localStorage.setItem("hunterLogTheme", value ? "dark" : "light");
+  }
   const [menuNewProfileName, setMenuNewProfileName] = useState("");
   const [showMenuCreate, setShowMenuCreate] = useState(false);
   const [questExpanded, setQuestExpanded] = useState({});
+  const [activeMuscleGroupTab, setActiveMuscleGroupTab] = useState(null);
+  const [dayViewMode, setDayViewMode] = useState("tabs");
+  const [editMode, setEditMode] = useState(false);
+  const [selectedToRemove, setSelectedToRemove] = useState([]);
   const [customExercises, setCustomExercises] = useState({ day1: [], day2: [], day3: [], day4: [] });
   const [customSlotOptions, setCustomSlotOptions] = useState({});
   const [hiddenSlots, setHiddenSlots] = useState({ day1: [], day2: [], day3: [], day4: [] });
   const [cardioHistory, setCardioHistory] = useState([]);
   const [manualMaxes, setManualMaxes] = useState([]);
+  const [libraryExercises, setLibraryExercises] = useState([]);
   const [showCardioForm, setShowCardioForm] = useState(false);
   const [showDailyRecap, setShowDailyRecap] = useState(false);
   const [showBonusQuest, setShowBonusQuest] = useState(false);
@@ -1991,9 +2400,11 @@ function WorkoutTracker() {
   const [cardioMinutes, setCardioMinutes] = useState("");
   const [profiles, setProfiles] = useState({});
   const [activeProfileId, setActiveProfileId] = useState("default");
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNewProfileForm, setShowNewProfileForm] = useState(false);
   const [builderMode, setBuilderMode] = useState("quick");
+  const [needsPlanSetup, setNeedsPlanSetup] = useState(false);
+  const [swapSearchSlot, setSwapSearchSlot] = useState(null);
+  const [swapSearchQuery, setSwapSearchQuery] = useState("");
   const [manualDayCount, setManualDayCount] = useState(3);
   const [manualDays, setManualDays] = useState([[], [], []]);
   const [manualExpandedDay, setManualExpandedDay] = useState(0);
@@ -2009,6 +2420,10 @@ function WorkoutTracker() {
   useEffect(() => {
     let loadedProfiles = null;
     let loadedActiveId = "default";
+    try {
+      const themeVal = localStorage.getItem("hunterLogTheme");
+      if (themeVal === "dark") setDarkMode(true);
+    } catch (e) {}
     try {
       const raw = localStorage.getItem("hunterLogState");
       if (raw) {
@@ -2048,6 +2463,7 @@ function WorkoutTracker() {
     setHiddenSlots(active.hiddenSlots || emptyDayMap());
     setCardioHistory(active.cardioHistory || []);
     setManualMaxes(active.manualMaxes || []);
+    setLibraryExercises(active.libraryExercises || []);
     const initialDayKeys = Object.keys(resolveProfileDays(active));
     if (!initialDayKeys.includes(activeDay)) {
       setActiveDay(getDefaultDayForCount(initialDayKeys.length));
@@ -2072,7 +2488,7 @@ function WorkoutTracker() {
     return () => clearInterval(iv);
   }, []);
 
-  async function persist(newHistory, newActiveOptions, newCustom, newCustomOpts, newHidden, newCardio, newMaxes) {
+  async function persist(newHistory, newActiveOptions, newCustom, newCustomOpts, newHidden, newCardio, newMaxes, newLibrary) {
     setSyncStatus({ state: "saving", time: null });
     try {
       const existing = profiles[activeProfileId] || {};
@@ -2088,6 +2504,7 @@ function WorkoutTracker() {
           hiddenSlots: newHidden || hiddenSlots,
           cardioHistory: newCardio || cardioHistory,
           manualMaxes: newMaxes || manualMaxes,
+          libraryExercises: newLibrary || libraryExercises,
         },
       };
       localStorage.setItem("hunterLogState", JSON.stringify({ schemaVersion: CURRENT_SCHEMA_VERSION, activeProfileId, profiles: updatedProfiles }));
@@ -2108,6 +2525,7 @@ function WorkoutTracker() {
     setHiddenSlots(data.hiddenSlots || emptyDayMap());
     setCardioHistory(data.cardioHistory || []);
     setManualMaxes(data.manualMaxes || []);
+    setLibraryExercises(data.libraryExercises || []);
     const days = resolveProfileDays(data);
     const dayKeys = Object.keys(days);
     if (activeDay !== "history" && !dayKeys.includes(activeDay)) {
@@ -2117,13 +2535,38 @@ function WorkoutTracker() {
 
   function currentProfileSnapshot() {
     const existing = profiles[activeProfileId] || {};
-    return { ...existing, name: existing.name || DEFAULT_PROFILE_NAME, history, activeOptions, customExercises, customSlotOptions, hiddenSlots, cardioHistory, manualMaxes };
+    return {
+      ...existing,
+      name: existing.name || DEFAULT_PROFILE_NAME,
+      history,
+      activeOptions,
+      customExercises,
+      customSlotOptions,
+      hiddenSlots,
+      cardioHistory,
+      manualMaxes,
+      libraryExercises,
+    };
   }
 
-  function switchToProfile(targetId) {
+  function prefillBuilderFromProfile(profileData) {
+    const days = resolveProfileDays(profileData);
+    const dayKeys = Object.keys(days);
+    const muscleSets = dayKeys.map((key) => [...new Set(days[key].slots.map((s) => s.muscleGroup).filter(Boolean))]);
+    setNewPlanDayCount(dayKeys.length);
+    setNewPlanDayMuscles(muscleSets);
+  }
+
+  function switchToProfile(targetId, showCustomize) {
     if (targetId === activeProfileId) {
-      setShowProfileMenu(false);
-      setCurrentScreen("day");
+      if (showCustomize) {
+        if (needsPlanSetup) {
+          setNeedsPlanSetup(false);
+        } else {
+          prefillBuilderFromProfile(currentProfileSnapshot());
+          setNeedsPlanSetup(true);
+        }
+      }
       return;
     }
     const updatedProfiles = { ...profiles, [activeProfileId]: currentProfileSnapshot() };
@@ -2132,8 +2575,10 @@ function WorkoutTracker() {
     setProfiles(updatedProfiles);
     setActiveProfileId(targetId);
     loadProfileIntoState(target);
-    setShowProfileMenu(false);
-    setCurrentScreen("day");
+    if (showCustomize) {
+      prefillBuilderFromProfile(target);
+      setNeedsPlanSetup(true);
+    }
     localStorage.setItem("hunterLogState", JSON.stringify({ schemaVersion: CURRENT_SCHEMA_VERSION, activeProfileId: targetId, profiles: updatedProfiles }));
   }
 
@@ -2176,7 +2621,6 @@ function WorkoutTracker() {
     setNewPlanDayCount(3);
     setNewPlanDayMuscles([[], [], []]);
     setShowNewProfileForm(false);
-    setShowProfileMenu(false);
     localStorage.setItem("hunterLogState", JSON.stringify({ schemaVersion: CURRENT_SCHEMA_VERSION, activeProfileId: id, profiles: updatedProfiles }));
   }
 
@@ -2227,8 +2671,44 @@ function WorkoutTracker() {
     setManualExpandedDay(0);
     setBuilderMode("quick");
     setShowNewProfileForm(false);
-    setShowProfileMenu(false);
     localStorage.setItem("hunterLogState", JSON.stringify({ schemaVersion: CURRENT_SCHEMA_VERSION, activeProfileId: id, profiles: updatedProfiles }));
+  }
+
+  function applyQuickSetupToCurrentProfile() {
+    const days = newPlanDayMuscles.map((groups) => ({ muscleGroups: groups, label: labelForMuscleGroups(groups) }));
+    const planStructure = { dayCount: newPlanDayCount, days };
+    const updatedProfiles = { ...profiles, [activeProfileId]: { ...currentProfileSnapshot(), planStructure } };
+    setProfiles(updatedProfiles);
+    const dayKeys = Object.keys(resolveProfileDays(updatedProfiles[activeProfileId]));
+    setActiveDay(getDefaultDayForCount(dayKeys.length));
+    setNeedsPlanSetup(false);
+    setNewPlanDayCount(3);
+    setNewPlanDayMuscles([[], [], []]);
+    localStorage.setItem("hunterLogState", JSON.stringify({ schemaVersion: CURRENT_SCHEMA_VERSION, activeProfileId, profiles: updatedProfiles }));
+  }
+
+  function applyManualBuildToCurrentProfile() {
+    const covered = coveredMuscleGroups(manualDays);
+    if (!FULL_BODY_REQUIREMENT.every((g) => covered.has(g))) return;
+    const days = manualDays.map((slotIds) => {
+      const groups = [...new Set(slotIds.map((id) => ALL_SLOTS.find((s) => s.slotId === id)?.muscleGroup).filter(Boolean))];
+      return { slotIds, muscleGroups: groups, label: labelForMuscleGroups(groups) };
+    });
+    const planStructure = { dayCount: manualDayCount, days };
+    const updatedProfiles = { ...profiles, [activeProfileId]: { ...currentProfileSnapshot(), planStructure } };
+    setProfiles(updatedProfiles);
+    const dayKeys = Object.keys(resolveProfileDays(updatedProfiles[activeProfileId]));
+    setActiveDay(getDefaultDayForCount(dayKeys.length));
+    setNeedsPlanSetup(false);
+    setManualDayCount(3);
+    setManualDays([[], [], []]);
+    setManualExpandedDay(0);
+    setBuilderMode("quick");
+    localStorage.setItem("hunterLogState", JSON.stringify({ schemaVersion: CURRENT_SCHEMA_VERSION, activeProfileId, profiles: updatedProfiles }));
+  }
+
+  function useStandardSplitForCurrentProfile() {
+    setNeedsPlanSetup(false);
   }
 
   function renameActiveProfile() {
@@ -2418,13 +2898,15 @@ function WorkoutTracker() {
     const name = menuNewProfileName.trim();
     if (!name) return;
     const id = `profile_${Date.now()}`;
-    const updatedProfiles = { ...profiles, [activeProfileId]: currentProfileSnapshot(), [id]: freshProfileData(name, true) };
+    const updatedProfiles = { ...profiles, [activeProfileId]: currentProfileSnapshot(), [id]: freshProfileData(name, false) };
     setProfiles(updatedProfiles);
     setActiveProfileId(id);
     loadProfileIntoState(updatedProfiles[id]);
     setMenuNewProfileName("");
     setShowMenuCreate(false);
     localStorage.setItem("hunterLogState", JSON.stringify({ schemaVersion: CURRENT_SCHEMA_VERSION, activeProfileId: id, profiles: updatedProfiles }));
+    setNeedsPlanSetup(true);
+    setCurrentScreen("profile");
     setAppPhase("main");
   }
 
@@ -2433,12 +2915,18 @@ function WorkoutTracker() {
   }
 
   if (!loaded || appPhase === "loading") {
-    return <LoadingScreen />;
+    return (
+      <>
+        <SystemStyles />
+        <LoadingScreen />
+      </>
+    );
   }
 
   if (appPhase === "mainMenu") {
     return (
       <>
+        <SystemStyles />
         <MainMenuScreen
           profiles={profiles}
           onSelectProfile={handleSelectProfileFromMenu}
@@ -2450,14 +2938,26 @@ function WorkoutTracker() {
           onSave={handleManualSave}
           savedFlash={syncStatus.state === "synced"}
           onOpenRecords={() => setShowTrophyRoom(true)}
-          onOpenMaxes={() => setShowMyMaxes(true)}
           onOpenHelp={() => setShowHelp(true)}
+          onOpenSettings={() => setShowSettings(true)}
         />
-        {showTrophyRoom && <TrophyRoom history={history} onClose={() => setShowTrophyRoom(false)} />}
-        {showMyMaxes && (
-          <MyMaxesScreen maxes={manualMaxes} onAdd={handleAddManualMax} onDelete={handleDeleteManualMax} onClose={() => setShowMyMaxes(false)} />
+        {showTrophyRoom && (
+          <TrophyRoom history={history} maxes={manualMaxes} onAdd={handleAddManualMax} onDelete={handleDeleteManualMax} onClose={() => setShowTrophyRoom(false)} />
         )}
         {showHelp && <HelpScreen onClose={() => setShowHelp(false)} />}
+        {showSettings && (
+          <SettingsScreen
+            darkMode={darkMode}
+            onSetDarkMode={handleSetDarkMode}
+            onExport={handleExport}
+            onImport={handleImport}
+            onReset={handleReset}
+            resetArmed={resetArmed}
+            profileCount={Object.keys(profiles).length}
+            totalSessions={totalSessionsLogged(history)}
+            onClose={() => setShowSettings(false)}
+          />
+        )}
       </>
     );
   }
@@ -2488,6 +2988,18 @@ function WorkoutTracker() {
     persist(history, activeOptions, newCustom);
   }
 
+  function handleSwapFromLibrary(slot, libraryOptId, libraryOptName) {
+    const alreadyKnown = slot.options.some((o) => o.id === libraryOptId);
+    let newCustomOpts = customSlotOptions;
+    if (!alreadyKnown) {
+      newCustomOpts = { ...customSlotOptions, [slot.slotId]: [...(customSlotOptions[slot.slotId] || []), { id: libraryOptId, name: libraryOptName }] };
+      setCustomSlotOptions(newCustomOpts);
+    }
+    const newActive = { ...activeOptions, [slot.slotId]: libraryOptId };
+    setActiveOptions(newActive);
+    persist(history, newActive, customExercises, newCustomOpts);
+  }
+
   function handleAddCustomOption(slot, name) {
     const id = `customopt_${Date.now()}`;
     const entry = { id, name };
@@ -2515,6 +3027,16 @@ function WorkoutTracker() {
     persist(history, activeOptions, customExercises, customSlotOptions, newHidden);
   }
 
+  function handleBatchRemove(dayKey, items) {
+    const customIds = items.filter((i) => i.isCustom).map((i) => i.id);
+    const slotIds = items.filter((i) => !i.isCustom).map((i) => i.id);
+    const newCustom = { ...customExercises, [dayKey]: (customExercises[dayKey] || []).filter((e) => !customIds.includes(e.id)) };
+    const newHidden = { ...hiddenSlots, [dayKey]: [...(hiddenSlots[dayKey] || []), ...slotIds] };
+    setCustomExercises(newCustom);
+    setHiddenSlots(newHidden);
+    persist(history, activeOptions, newCustom, customSlotOptions, newHidden);
+  }
+
   function handleRestoreSlot(dayKey, slotId) {
     const newHidden = { ...hiddenSlots, [dayKey]: (hiddenSlots[dayKey] || []).filter((id) => id !== slotId) };
     setHiddenSlots(newHidden);
@@ -2529,6 +3051,41 @@ function WorkoutTracker() {
     setCardioHistory(newCardio);
     persist(history, activeOptions, customExercises, customSlotOptions, hiddenSlots, newCardio);
     setCardioMinutes("");
+  }
+
+  function handleSetPresetMax(optionId, weight) {
+    if (!isNumericWeight(weight)) return;
+    const newHistory = { ...history, [optionId]: [{ date: "Reported", weight, reps: null, isBaseline: true }] };
+    setHistory(newHistory);
+    persist(newHistory, activeOptions, customExercises, customSlotOptions, hiddenSlots, cardioHistory, manualMaxes);
+  }
+
+  function handleAddLibraryExerciseToDay(slot, opt, dayKey) {
+    const id = `custom_${Date.now()}`;
+    const entry = { id, name: opt.name, muscleGroup: slot.muscleGroup, muscles: slot.muscles, cues: slot.cues };
+    const newCustom = { ...customExercises, [dayKey]: [...(customExercises[dayKey] || []), entry] };
+    setCustomExercises(newCustom);
+    persist(history, activeOptions, newCustom, customSlotOptions, hiddenSlots, cardioHistory, manualMaxes);
+  }
+
+  function handleAddNewLibraryExercise(name, muscleGroup, movement, equipment) {
+    const id = `libexercise_${Date.now()}`;
+    const entry = { id, name, muscleGroup, movement, equipment };
+    const newLibrary = [...libraryExercises, entry];
+    setLibraryExercises(newLibrary);
+    persist(history, activeOptions, customExercises, customSlotOptions, hiddenSlots, cardioHistory, manualMaxes, newLibrary);
+  }
+
+  function handleEditLibraryExercise(id, name, muscleGroup, movement, equipment) {
+    const newLibrary = libraryExercises.map((e) => (e.id === id ? { ...e, name, muscleGroup, movement, equipment } : e));
+    setLibraryExercises(newLibrary);
+    persist(history, activeOptions, customExercises, customSlotOptions, hiddenSlots, cardioHistory, manualMaxes, newLibrary);
+  }
+
+  function handleDeleteLibraryExercise(id) {
+    const newLibrary = libraryExercises.filter((e) => e.id !== id);
+    setLibraryExercises(newLibrary);
+    persist(history, activeOptions, customExercises, customSlotOptions, hiddenSlots, cardioHistory, manualMaxes, newLibrary);
   }
 
   function handleAddManualMax(exercise, weight, repRange) {
@@ -2546,7 +3103,7 @@ function WorkoutTracker() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 pt-6 pb-24">
+    <div className="min-h-screen bg-gray-50 px-4 pt-6 pb-12">
       <SystemStyles />
 
       <SavedToast show={showSavedToast} />
@@ -2586,8 +3143,8 @@ function WorkoutTracker() {
               setShowPlateCalc(true);
             } else if (screen === "help") {
               setShowHelp(true);
-            } else if (screen === "maxes") {
-              setShowMyMaxes(true);
+            } else if (screen === "library") {
+              setShowLibrary(true);
             } else {
               setCurrentScreen(screen);
               if (dayKey) setActiveDay(dayKey);
@@ -2609,12 +3166,24 @@ function WorkoutTracker() {
           }}
         />
       )}
-      {showTrophyRoom && <TrophyRoom history={history} onClose={() => setShowTrophyRoom(false)} />}
-      {showPlateCalc && <PlateCalculatorScreen onClose={() => setShowPlateCalc(false)} />}
-      {showHelp && <HelpScreen onClose={() => setShowHelp(false)} />}
-      {showMyMaxes && (
-        <MyMaxesScreen maxes={manualMaxes} onAdd={handleAddManualMax} onDelete={handleDeleteManualMax} onClose={() => setShowMyMaxes(false)} />
+      {showTrophyRoom && (
+        <TrophyRoom history={history} maxes={manualMaxes} onAdd={handleAddManualMax} onDelete={handleDeleteManualMax} onClose={() => setShowTrophyRoom(false)} />
       )}
+      {showPlateCalc && <PlateCalculatorScreen onClose={() => setShowPlateCalc(false)} />}
+      {showLibrary && (
+        <ExerciseLibraryScreen
+          history={history}
+          libraryExercises={libraryExercises}
+          dayLabels={Object.fromEntries(Object.entries(programForProfile).map(([key, d]) => [key, d.label]))}
+          onSetMax={handleSetPresetMax}
+          onAddToDay={handleAddLibraryExerciseToDay}
+          onAddNewExercise={handleAddNewLibraryExercise}
+          onEditExercise={handleEditLibraryExercise}
+          onDeleteExercise={handleDeleteLibraryExercise}
+          onClose={() => setShowLibrary(false)}
+        />
+      )}
+      {showHelp && <HelpScreen onClose={() => setShowHelp(false)} />}
       {showDailyRecap && (
         <DailyRecapScreen day={day} history={history} streak={computeStreak(history)} onClose={() => setShowDailyRecap(false)} />
       )}
@@ -2632,60 +3201,156 @@ function WorkoutTracker() {
 
       {currentScreen === "profile" && (
       <>
-      <div className="bg-white border border-gray-100 rounded-xl p-3 mb-4">
-        {!renamingProfile ? (
-          <div className="flex items-center justify-between gap-2">
-            <button onClick={() => setShowProfileMenu((v) => !v)} className="flex-1 text-left">
-              <p className="text-gray-500 text-xs">WORKOUT PLAN</p>
-              <p className="text-blue-600 font-bold text-sm">{(profiles[activeProfileId] && profiles[activeProfileId].name) || DEFAULT_PROFILE_NAME} ▾</p>
-            </button>
-            <button
-              onClick={() => {
-                setProfileNameDraft((profiles[activeProfileId] && profiles[activeProfileId].name) || DEFAULT_PROFILE_NAME);
-                setRenamingProfile(true);
-              }}
-              className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-1.5 shrink-0"
-            >
-              Rename
-            </button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-1.5">
-            <input
-              type="text"
-              value={profileNameDraft}
-              onChange={(e) => setProfileNameDraft(e.target.value)}
-              className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-gray-900"
-            />
-            <button onClick={renameActiveProfile} disabled={!profileNameDraft.trim()} className={`text-xs font-bold px-3 py-1.5 rounded-full shrink-0 ${profileNameDraft.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}>
-              Save
-            </button>
-            <button onClick={() => setRenamingProfile(false)} className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-1.5 shrink-0">
-              Cancel
-            </button>
-          </div>
-        )}
+      <button onClick={() => setShowLibrary(true)} className="w-full bg-white rounded-2xl p-4 mb-4 shadow-sm flex items-center justify-between text-left">
+        <div>
+          <p className="text-gray-900 font-bold text-sm">Exercise Library</p>
+          <p className="text-gray-400 text-xs mt-0.5">Browse exercises, set maxes, add to any day</p>
+        </div>
+        <span className="text-gray-300 text-lg">›</span>
+      </button>
 
-        {showProfileMenu && (
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            {Object.entries(profiles).map(([id, p]) => (
-              <div key={id} className="flex items-center justify-between mb-1.5 last:mb-0">
-                <button onClick={() => switchToProfile(id)} className={`text-xs font-semibold text-left flex-1 ${id === activeProfileId ? "text-blue-600" : "text-gray-700"}`}>
+      <div className="bg-white border border-gray-100 rounded-xl p-3 mb-4">
+        {Object.entries(profiles).map(([id, p], i, arr) => (
+          <div key={id} className={`flex items-center justify-between gap-2 py-1.5 ${i < arr.length - 1 ? "row-divider mb-1.5" : ""}`}>
+            {renamingProfile === id ? (
+              <div className="flex items-center gap-1.5 flex-1">
+                <input
+                  type="text"
+                  value={profileNameDraft}
+                  onChange={(e) => setProfileNameDraft(e.target.value)}
+                  className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-gray-900"
+                  autoFocus
+                />
+                <button onClick={renameActiveProfile} disabled={!profileNameDraft.trim()} className={`text-xs font-bold px-3 py-1.5 rounded-full shrink-0 ${profileNameDraft.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}>
+                  Save
+                </button>
+                <button onClick={() => setRenamingProfile(false)} className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-1.5 shrink-0">
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <>
+                <button onClick={() => switchToProfile(id, true)} className={`text-sm text-left flex-1 ${id === activeProfileId ? "text-blue-600 font-bold" : "text-gray-700"}`}>
                   {id === activeProfileId ? "▸ " : ""}
                   {p.name}
+                </button>
+                <button
+                  onClick={() => {
+                    setProfileNameDraft(p.name);
+                    setRenamingProfile(id);
+                  }}
+                  className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-1.5 shrink-0"
+                >
+                  Rename
                 </button>
                 {Object.keys(profiles).length > 1 && (
                   <button onClick={() => deleteProfile(id)} className="text-xs text-red-600 underline underline-offset-2 shrink-0 ml-2">
                     Delete
                   </button>
                 )}
-              </div>
-            ))}
+              </>
+            )}
           </div>
-        )}
+        ))}
       </div>
 
       <div className="mb-4">
+            {needsPlanSetup && (
+              <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-3">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-gray-900 font-bold text-sm">Customize this plan</p>
+                  <button onClick={() => { setNeedsPlanSetup(false); setSwapSearchSlot(null); }} className="text-xs font-semibold text-blue-600">
+                    Done
+                  </button>
+                </div>
+
+                {Object.entries(programForProfile).map(([dayKey, baseDay]) => {
+                  const day = mergedDaySlots(baseDay, customExercises[dayKey], customSlotOptions, hiddenSlots[dayKey]);
+                  return (
+                    <div key={dayKey} className="bg-white rounded-xl p-3 mb-2">
+                      <p className="text-gray-900 font-bold text-xs mb-2">
+                        {baseDay.short} — {baseDay.label}
+                      </p>
+                      {day.slots.map((slot, slotIdx) => {
+                        const optId = getActiveOptionId(slot);
+                        const activeOption = slot.options.find((o) => o.id === optId) || slot.options[0];
+                        const isSwapping = swapSearchSlot === slot.slotId;
+                        const query = swapSearchQuery.trim().toLowerCase();
+                        const results = isSwapping
+                          ? ALL_SLOTS.flatMap((s) => s.options.map((o) => ({ ...o, muscleGroup: s.muscleGroup, sourceSlot: s })))
+                              .filter((o) => o.id !== optId)
+                              .filter((o) => (query ? o.name.toLowerCase().includes(query) : o.muscleGroup === slot.muscleGroup))
+                              .slice(0, 8)
+                          : [];
+                        return (
+                          <div key={slot.slotId} className={`${slotIdx < day.slots.length - 1 ? "row-divider" : ""} py-2`}>
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-gray-900 text-sm flex-1">{activeOption.name}</span>
+                              <button
+                                onClick={() => {
+                                  setSwapSearchSlot(isSwapping ? null : slot.slotId);
+                                  setSwapSearchQuery("");
+                                }}
+                                className="text-xs font-semibold text-blue-600"
+                              >
+                                {isSwapping ? "Cancel" : "Swap"}
+                              </button>
+                              <button onClick={() => handleHideSlot(dayKey, slot.slotId)} className="text-xs font-semibold text-red-600">
+                                Remove
+                              </button>
+                            </div>
+                            {isSwapping && (
+                              <div className="mt-2">
+                                <input
+                                  type="text"
+                                  value={swapSearchQuery}
+                                  onChange={(e) => setSwapSearchQuery(e.target.value)}
+                                  placeholder={`Search exercises (default: ${slot.muscleGroup})`}
+                                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 text-xs text-gray-900 mb-1.5"
+                                />
+                                <div className="max-h-40 overflow-y-auto">
+                                  {results.length === 0 ? (
+                                    <p className="text-gray-400 text-xs px-1 py-1">No matches</p>
+                                  ) : (
+                                    results.map((r) => (
+                                      <button
+                                        key={r.id}
+                                        onClick={() => {
+                                          handleSwapFromLibrary(slot, r.id, r.name);
+                                          setSwapSearchSlot(null);
+                                          setSwapSearchQuery("");
+                                        }}
+                                        className="w-full text-left px-2 py-1.5 rounded-lg text-xs text-gray-700 hover:bg-gray-50 flex items-center justify-between"
+                                      >
+                                        <span>{r.name}</span>
+                                        <span className="text-gray-400">{r.muscleGroup}</span>
+                                      </button>
+                                    ))
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                      <button
+                        onClick={() => {
+                          setNewExerciseDay(dayKey);
+                          setShowAddExercise(true);
+                        }}
+                        className="text-xs font-bold text-blue-600 mt-2"
+                      >
+                        + Add Exercise
+                      </button>
+                    </div>
+                  );
+                })}
+
+                <button onClick={useStandardSplitForCurrentProfile} className="w-full text-xs font-bold text-white bg-gray-900 rounded-lg py-2.5 mt-2">
+                  Reset to Standard 4-Day Split
+                </button>
+              </div>
+            )}
             {!showNewProfileForm ? (
               <button onClick={() => setShowNewProfileForm(true)} className="mt-2 text-xs font-bold text-blue-600 underline underline-offset-2">
                 + Create new workout plan
@@ -2693,12 +3358,12 @@ function WorkoutTracker() {
             ) : (
               <div className="mt-3">
                 <input
-                  type="text"
-                  value={newProfileName}
-                  onChange={(e) => setNewProfileName(e.target.value)}
-                  placeholder="Plan name, e.g. Summer Cut Plan"
-                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 text-xs text-gray-900 mb-3"
-                />
+                    type="text"
+                    value={newProfileName}
+                    onChange={(e) => setNewProfileName(e.target.value)}
+                    placeholder="Plan name, e.g. Summer Cut Plan"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 text-xs text-gray-900 mb-3"
+                  />
 
                 <div className="flex gap-1 mb-3 bg-gray-50 p-1 rounded-lg">
                   <button
@@ -2760,12 +3425,18 @@ function WorkoutTracker() {
                 ))}
 
                 <div className="flex items-center gap-1.5 mt-2">
-                  <button onClick={createProfile} disabled={!newProfileName.trim()} className={`text-xs font-bold px-3 py-1.5 rounded-full ${newProfileName.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}>
-                    Create Plan
+                  <button
+                    onClick={needsPlanSetup ? applyQuickSetupToCurrentProfile : createProfile}
+                    disabled={!needsPlanSetup && !newProfileName.trim()}
+                    className={`text-xs font-bold px-3 py-1.5 rounded-full ${needsPlanSetup || newProfileName.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}
+                  >
+                    {needsPlanSetup ? "Save Plan" : "Create Plan"}
                   </button>
-                  <button onClick={() => setShowNewProfileForm(false)} className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-1.5">
-                    Cancel
-                  </button>
+                  {!needsPlanSetup && (
+                    <button onClick={() => setShowNewProfileForm(false)} className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-1.5">
+                      Cancel
+                    </button>
+                  )}
                 </div>
                 </>
                 )}
@@ -2841,15 +3512,17 @@ function WorkoutTracker() {
 
                       <div className="flex items-center gap-1.5">
                         <button
-                          onClick={createManualProfile}
-                          disabled={!newProfileName.trim() || !isFullBody}
-                          className={`text-xs font-bold px-3 py-1.5 rounded-full ${newProfileName.trim() && isFullBody ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}
+                          onClick={needsPlanSetup ? applyManualBuildToCurrentProfile : createManualProfile}
+                          disabled={(!needsPlanSetup && !newProfileName.trim()) || !isFullBody}
+                          className={`text-xs font-bold px-3 py-1.5 rounded-full ${(needsPlanSetup || newProfileName.trim()) && isFullBody ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}
                         >
-                          {isFullBody ? "Finish Building" : "Cover every group to finish"}
+                          {isFullBody ? (needsPlanSetup ? "Save Plan" : "Finish Building") : "Cover every group to finish"}
                         </button>
-                        <button onClick={() => setShowNewProfileForm(false)} className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-1.5">
-                          Cancel
-                        </button>
+                        {!needsPlanSetup && (
+                          <button onClick={() => setShowNewProfileForm(false)} className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-1.5">
+                            Cancel
+                          </button>
+                        )}
                       </div>
                     </div>
                   );
@@ -2860,13 +3533,12 @@ function WorkoutTracker() {
       </>
       )}
 
-      {currentScreen === "status" && <HunterStatus history={history} cardioHistory={cardioHistory} customExercises={customExercises} />}
+      {currentScreen === "status" && <ProgressSummary history={history} cardioHistory={cardioHistory} customExercises={customExercises} />}
 
       {currentScreen === "history" && <HistoryView history={history} />}
 
       {currentScreen === "day" && (
         <>
-          <h2 className="text-gray-900 font-bold text-sm mb-3">{day.label}</h2>
           <DailyQuestBox
             done={doneCount}
             total={day.slots.length}
@@ -2874,89 +3546,126 @@ function WorkoutTracker() {
             goals={questGoals}
             expanded={questIsExpanded}
             onToggleExpand={toggleQuestExpand}
+            todaysCardio={todaysCardio}
+            onOpenCardio={() => setShowBonusQuest(true)}
           />
 
-          {todaysCardio ? (
-            <p className="text-emerald-700 text-xs font-bold mb-4 -mt-2">
-              ✓ Cardio logged — {todaysCardio.machine} · {todaysCardio.minutes} min
-            </p>
-          ) : (
-            <button onClick={() => setShowBonusQuest(true)} className="text-xs text-gray-500 underline underline-offset-2 mb-4 -mt-2">
-              + Optional: log cardio
+          <div className="mb-4 flex items-center justify-between gap-2 flex-wrap">
+            <button
+              onClick={() => {
+                setNewExerciseDay(activeDay);
+                setShowAddExercise((v) => !v);
+              }}
+              className="flex items-center gap-1 text-xs font-bold text-blue-600 border border-blue-200 rounded-full pl-2.5 pr-3 py-1.5"
+            >
+              <span className="text-sm leading-none">+</span> Add Exercise
             </button>
-          )}
 
-          <div className="mb-4">
-            {!showAddExercise ? (
+            {!editMode ? (
               <button
-                onClick={() => {
-                  setNewExerciseDay(activeDay);
-                  setShowAddExercise(true);
-                }}
-                className="text-xs font-bold text-blue-600 border border-blue-200 rounded-full px-3 py-1.5"
+                onClick={() => setEditMode(true)}
+                className="text-xs font-semibold text-gray-500 border border-gray-200 rounded-full px-3 py-1.5"
               >
-                + Add Exercise
+                Select
               </button>
             ) : (
-              <div className="bg-white border border-gray-100 rounded-xl p-3">
-                <input
-                  type="text"
-                  value={newExerciseName}
-                  onChange={(e) => setNewExerciseName(e.target.value)}
-                  placeholder="Exercise name (e.g. Cable Crossover)"
-                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 text-xs text-gray-900 mb-2"
-                />
-                {newExerciseName.trim() && (
-                  <p className="text-gray-500 text-xs mb-2">
-                    Auto-tagged as: <span className="text-blue-600 font-bold">{autoTagExercise(newExerciseName).muscleGroup}</span>
-                  </p>
-                )}
-                {newExerciseName.trim() &&
-                  (() => {
-                    const targetDaySlots = mergedDaySlots(
-                      programForProfile[newExerciseDay],
-                      customExercises[newExerciseDay],
-                      customSlotOptions,
-                      hiddenSlots[newExerciseDay]
-                    ).slots;
-                    const similar = findSimilarSlot(newExerciseName, targetDaySlots, autoTagExercise(newExerciseName).muscleGroup);
-                    if (!similar) return null;
-                    return (
-                      <div className="border border-blue-200 rounded-lg p-2 mb-2">
-                        <p className="text-blue-600 text-xs font-semibold mb-1.5">
-                          This looks similar to "{similar.label}" — group it there instead?
-                        </p>
-                        <div className="flex flex-wrap gap-1.5">
-                          <button
-                            onClick={() => handleAddAsAlternativeOnly(similar, newExerciseName.trim())}
-                            className="text-xs font-bold bg-blue-500 text-white px-2.5 py-1 rounded-full"
-                          >
-                            Add as alternative
-                          </button>
-                          <button
-                            onClick={() => {
-                              handleAddCustomOption(similar, newExerciseName.trim());
-                              setShowAddExercise(false);
-                            }}
-                            className="text-xs font-bold border border-blue-200 text-blue-600 px-2.5 py-1 rounded-full"
-                          >
-                            Make it the main one
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })()}
-                <div className="flex items-center gap-2">
-                  <button onClick={handleAddCustomExercise} disabled={!newExerciseName.trim()} className={`text-xs font-bold px-3 py-1.5 rounded-full ${newExerciseName.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}>
-                    Add to {programForProfile[newExerciseDay].short}
-                  </button>
-                  <button onClick={() => { setShowAddExercise(false); setNewExerciseName(""); }} className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-1.5">
-                    Cancel
-                  </button>
-                </div>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400 text-xs">{selectedToRemove.length > 0 ? `${selectedToRemove.length} selected` : "Tap to select"}</span>
+                <button
+                  onClick={() => {
+                    setEditMode(false);
+                    setSelectedToRemove([]);
+                  }}
+                  className="w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-sm font-bold"
+                >
+                  ✕
+                </button>
               </div>
             )}
+
+            {showAddExercise && (
+                  <div className="w-full bg-white border border-gray-100 rounded-xl p-3 mt-2">
+                    <p className="text-gray-900 font-bold text-xs mb-2">Add Exercise</p>
+                    <input
+                      type="text"
+                      value={newExerciseName}
+                      onChange={(e) => setNewExerciseName(e.target.value)}
+                      placeholder="Exercise name (e.g. Cable Crossover)"
+                      className="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 text-xs text-gray-900 mb-2"
+                    />
+                    {newExerciseName.trim() && (
+                      <p className="text-gray-500 text-xs mb-2">
+                        Auto-tagged as: <span className="text-blue-600 font-bold">{autoTagExercise(newExerciseName).muscleGroup}</span>
+                      </p>
+                    )}
+                    {newExerciseName.trim() &&
+                      (() => {
+                        const targetDaySlots = mergedDaySlots(
+                          programForProfile[newExerciseDay],
+                          customExercises[newExerciseDay],
+                          customSlotOptions,
+                          hiddenSlots[newExerciseDay]
+                        ).slots;
+                        const similar = findSimilarSlot(newExerciseName, targetDaySlots, autoTagExercise(newExerciseName).muscleGroup);
+                        if (!similar) return null;
+                        return (
+                          <div className="border border-blue-200 rounded-lg p-2 mb-2">
+                            <p className="text-blue-600 text-xs font-semibold mb-1.5">
+                              This looks similar to "{similar.label}" — group it there instead?
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                              <button
+                                onClick={() => handleAddAsAlternativeOnly(similar, newExerciseName.trim())}
+                                className="text-xs font-bold bg-blue-500 text-white px-2.5 py-1 rounded-full"
+                              >
+                                Add as alternative
+                              </button>
+                              <button
+                                onClick={() => {
+                                  handleAddCustomOption(similar, newExerciseName.trim());
+                                  setShowAddExercise(false);
+                                }}
+                                className="text-xs font-bold border border-blue-200 text-blue-600 px-2.5 py-1 rounded-full"
+                              >
+                                Make it the main one
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    <div className="flex items-center gap-2">
+                      <button onClick={handleAddCustomExercise} disabled={!newExerciseName.trim()} className={`text-xs font-bold px-3 py-1.5 rounded-full ${newExerciseName.trim() ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-400"}`}>
+                        Add to {programForProfile[newExerciseDay].short}
+                      </button>
+                      <button onClick={() => { setShowAddExercise(false); setNewExerciseName(""); }} className="text-xs font-semibold text-gray-500 border border-gray-100 rounded-full px-3 py-1.5">
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+            )}
           </div>
+
+          {editMode && selectedToRemove.length > 0 && (
+            <button
+              onClick={() => {
+                handleBatchRemove(activeDay, selectedToRemove);
+                setSelectedToRemove([]);
+                setEditMode(false);
+              }}
+              className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-red-500 text-white shadow-lg flex items-center justify-center relative"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 7h16" />
+                <path d="M10 11v6" />
+                <path d="M14 11v6" />
+                <path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12" />
+                <path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3" />
+              </svg>
+              <span className="absolute -top-1 -right-1 bg-white text-red-500 text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                {selectedToRemove.length}
+              </span>
+            </button>
+          )}
 
           {hiddenSlots[activeDay] && hiddenSlots[activeDay].length > 0 && (
             <div className="mb-4">
@@ -2982,72 +3691,140 @@ function WorkoutTracker() {
           {questIsExpanded && (
             <>
 
-              {groupedSlots.map((group) => {
-                const sortedSlots = [...group.slots].sort((a, b) => {
-                  const aDone = loggedToday(history, getActiveOptionId(a)) ? 1 : 0;
-                  const bDone = loggedToday(history, getActiveOptionId(b)) ? 1 : 0;
-                  return aDone - bDone;
-                });
-                return (
-                <div key={group.muscleGroup}>
-                  <h3 className="text-gray-500 font-black uppercase tracking-widest text-xs mt-5 mb-2">{group.muscleGroup}</h3>
-                  {sortedSlots.map((slot) => {
-                    const optId = getActiveOptionId(slot);
-                    const activeOption = slot.options.find((o) => o.id === optId) || slot.options[0];
-                    return (
-                      <div key={slot.slotId}>
-                        <SlotCard
-                          slot={slot}
-                          activeOption={activeOption}
-                          history={history}
-                          dayKey={activeDay}
-                          swapOpen={swapOpenSlot === slot.slotId}
-                          onToggleSwap={() => setSwapOpenSlot(swapOpenSlot === slot.slotId ? null : slot.slotId)}
-                          onSwap={(newId) => handleSwap(slot, newId)}
-                          onAddCustomOption={(name) => handleAddCustomOption(slot, name)}
-                          draft={drafts[optId] || { weight: "", reps: [] }}
-                          onDraftChange={(field, value, index) => handleDraftChange(optId, field, value, index)}
-                          onLog={() => handleLog(slot)}
-                          isEditing={!!editingOptions[optId]}
-                          onEditLast={() => handleEditLast(slot, activeOption)}
-                          onCancelEdit={() => handleCancelEdit(activeOption)}
-                          onRemoveLast={() => handleRemoveLast(activeOption)}
-                          logStatus={logStatus[slot.slotId]}
-                          timerState={timers[slot.slotId]}
-                          onStartTimer={() => startTimer(slot)}
-                          onCancelTimer={() => cancelTimer(slot)}
-                          onExpandTimer={() => setFullScreenTimerSlot(slot.slotId)}
-                        />
+              {(() => {
+                const effectiveTab = groupedSlots.some((g) => g.muscleGroup === activeMuscleGroupTab)
+                  ? activeMuscleGroupTab
+                  : groupedSlots[0]?.muscleGroup || null;
+                const currentGroup = groupedSlots.find((g) => g.muscleGroup === effectiveTab);
+                const sortedSlots = currentGroup
+                  ? [...currentGroup.slots].sort((a, b) => {
+                      const aDone = loggedToday(history, getActiveOptionId(a)) ? 1 : 0;
+                      const bDone = loggedToday(history, getActiveOptionId(b)) ? 1 : 0;
+                      return aDone - bDone;
+                    })
+                  : [];
+                const renderSlotCard = (slot) => {
+                  const optId = getActiveOptionId(slot);
+                  const activeOption = slot.options.find((o) => o.id === optId) || slot.options[0];
+                  const removeKey = slot.isCustom ? slot.options[0].id : slot.slotId;
+                  const isSelected = selectedToRemove.some((s) => s.id === removeKey);
+                  return (
+                    <div key={slot.slotId} className="relative mb-3">
+                      <SlotCard
+                        slot={slot}
+                        activeOption={activeOption}
+                        history={history}
+                        dayKey={activeDay}
+                        swapOpen={swapOpenSlot === slot.slotId}
+                        onToggleSwap={() => setSwapOpenSlot(swapOpenSlot === slot.slotId ? null : slot.slotId)}
+                        onSwap={(newId) => handleSwap(slot, newId)}
+                        onAddCustomOption={(name) => handleAddCustomOption(slot, name)}
+                        draft={drafts[optId] || { weight: "", reps: [] }}
+                        onDraftChange={(field, value, index) => handleDraftChange(optId, field, value, index)}
+                        onLog={() => handleLog(slot)}
+                        isEditing={!!editingOptions[optId]}
+                        onEditLast={() => handleEditLast(slot, activeOption)}
+                        onCancelEdit={() => handleCancelEdit(activeOption)}
+                        onRemoveLast={() => handleRemoveLast(activeOption)}
+                        logStatus={logStatus[slot.slotId]}
+                        timerState={timers[slot.slotId]}
+                        onStartTimer={() => startTimer(slot)}
+                        onCancelTimer={() => cancelTimer(slot)}
+                        onExpandTimer={() => setFullScreenTimerSlot(slot.slotId)}
+                        editMode={editMode}
+                      />
+                      {editMode && (
                         <button
                           onClick={() =>
-                            slot.isCustom
-                              ? handleRemoveCustomExercise(activeDay, slot.options[0].id)
-                              : handleHideSlot(activeDay, slot.slotId)
+                            setSelectedToRemove((prev) =>
+                              isSelected ? prev.filter((s) => s.id !== removeKey) : [...prev, { id: removeKey, isCustom: slot.isCustom }]
+                            )
                           }
-                          className="text-xs text-red-600 underline underline-offset-2 -mt-2 mb-3 ml-1"
+                          className={`absolute inset-0 rounded-2xl transition-colors ${isSelected ? "bg-blue-500/10 ring-2 ring-blue-400" : ""}`}
                         >
-                          {slot.isCustom ? "Remove this custom exercise" : "Remove from this workout"}
+                          <span
+                            className={`absolute top-3 right-3 w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                              isSelected ? "bg-blue-500 border-blue-500" : "bg-white/80 border-gray-300"
+                            }`}
+                          >
+                            {isSelected && <span className="text-white text-xs leading-none font-bold">✓</span>}
+                          </span>
                         </button>
+                      )}
+                    </div>
+                  );
+                };
+
+                const sortSlots = (slots) =>
+                  [...slots].sort((a, b) => {
+                    const aDone = loggedToday(history, getActiveOptionId(a)) ? 1 : 0;
+                    const bDone = loggedToday(history, getActiveOptionId(b)) ? 1 : 0;
+                    return aDone - bDone;
+                  });
+
+                return (
+                  <>
+                    <div className="flex items-center justify-end mb-2">
+                      <button
+                        onClick={() => setDayViewMode(dayViewMode === "tabs" ? "scroll" : "tabs")}
+                        className="shrink-0 w-8 h-8 rounded-full bg-white border border-gray-100 flex items-center justify-center text-gray-500"
+                        aria-label="Switch layout"
+                      >
+                        {dayViewMode === "tabs" ? (
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <rect x="4" y="4" width="7" height="7" rx="1.5" />
+                            <rect x="13" y="4" width="7" height="7" rx="1.5" />
+                            <rect x="4" y="13" width="7" height="7" rx="1.5" />
+                            <rect x="13" y="13" width="7" height="7" rx="1.5" />
+                          </svg>
+                        ) : (
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="4" y="4" width="7" height="7" rx="1.5" />
+                            <rect x="13" y="4" width="7" height="7" rx="1.5" />
+                            <rect x="4" y="13" width="7" height="7" rx="1.5" />
+                            <rect x="13" y="13" width="7" height="7" rx="1.5" />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+
+                    <div className="mb-4 overflow-x-auto pb-1">
+                      <div className="flex gap-1.5">
+                        {dayViewMode === "tabs" &&
+                          groupedSlots.map((group) => {
+                            const doneInGroup = group.slots.filter((s) => loggedToday(history, getActiveOptionId(s))).length;
+                            const active = group.muscleGroup === effectiveTab;
+                            return (
+                              <button
+                                key={group.muscleGroup}
+                                onClick={() => setActiveMuscleGroupTab(group.muscleGroup)}
+                                className={`shrink-0 text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap ${
+                                  active ? "bg-blue-500 text-white" : "bg-white border border-gray-100 text-gray-500"
+                                }`}
+                              >
+                                {group.muscleGroup} {doneInGroup}/{group.slots.length}
+                              </button>
+                            );
+                          })}
                       </div>
-                    );
-                  })}
-            </div>
-            );
-          })}
+                    </div>
+
+                    {dayViewMode === "tabs"
+                      ? sortedSlots.map(renderSlotCard)
+                      : groupedSlots.map((group) => (
+                          <div key={group.muscleGroup} className="mb-4">
+                            <p className="text-gray-400 text-xs font-semibold tracking-wide mb-2 px-1">{group.muscleGroup.toUpperCase()}</p>
+                            {sortSlots(group.slots).map(renderSlotCard)}
+                          </div>
+                        ))}
+                  </>
+                );
+              })()}
             </>
           )}
         </>
       )}
 
-      {currentScreen === "backup" && (
-        <>
-          <BackupSection onExport={handleExport} onImport={handleImport} />
-          <button onClick={handleReset} className="mt-4 text-xs text-gray-500 underline underline-offset-2 focus:outline-none">
-            {resetArmed ? "Tap again to confirm reset" : "Reset all logged data"}
-          </button>
-        </>
-      )}
-      <BottomNav currentScreen={currentScreen} onNavigate={setCurrentScreen} onOpenMenu={() => setShowMenu(true)} />
     </div>
   );
 }
